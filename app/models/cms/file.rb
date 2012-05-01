@@ -1,12 +1,6 @@
-class Cms::File < ActiveRecord::Base
+class Cms::File < Cms::Orm::File
   
   IMAGE_MIMETYPES = %w(gif jpeg pjpeg png svg+xml tiff).collect{|subtype| "image/#{subtype}"}
-  
-  ComfortableMexicanSofa.establish_connection(self)
-    
-  self.table_name = 'cms_files'
-  
-  cms_is_categorized
   
   attr_accessor :dimensions
   
@@ -20,11 +14,7 @@ class Cms::File < ActiveRecord::Base
     }
   )
   before_post_process :is_image?
-  
-  # -- Relationships --------------------------------------------------------
-  belongs_to :site
-  belongs_to :block
-  
+
   # -- Validations ----------------------------------------------------------
   validates :site_id, :presence => true
   validates_attachment_presence :file
@@ -34,10 +24,6 @@ class Cms::File < ActiveRecord::Base
   before_create :assign_position
   after_save    :reload_page_cache
   after_destroy :reload_page_cache
-  
-  # -- Scopes ---------------------------------------------------------------
-  scope :images,      where(:file_content_type => IMAGE_MIMETYPES)
-  scope :not_images,  where('file_content_type NOT IN (?)', IMAGE_MIMETYPES)
   
   # -- Instance Methods -----------------------------------------------------
   def is_image?

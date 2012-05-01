@@ -1,14 +1,5 @@
-class Cms::Categorization < ActiveRecord::Base
-  
-  ComfortableMexicanSofa.establish_connection(self)
-  
-  self.table_name = 'cms_categorizations'
-  
-  # -- Relationships --------------------------------------------------------
-  belongs_to :category
-  belongs_to :categorized,
-    :polymorphic => true
-    
+class Cms::Categorization < Cms::Orm::Categorization
+
   # -- Validations ----------------------------------------------------------
   validates :categorized_type, :categorized_id,
     :presence   => true

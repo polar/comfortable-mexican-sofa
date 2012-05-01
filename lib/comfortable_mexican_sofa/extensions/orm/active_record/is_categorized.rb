@@ -1,4 +1,4 @@
-module ComfortableMexicanSofa::IsCategorized
+module ComfortableMexicanSofa::ActiveRecord::IsCategorized
   
   def self.included(base)
     base.send :extend, ClassMethods
@@ -6,7 +6,7 @@ module ComfortableMexicanSofa::IsCategorized
   
   module ClassMethods
     def cms_is_categorized
-      include ComfortableMexicanSofa::IsCategorized::InstanceMethods
+      include ComfortableMexicanSofa::ActiveRecord::IsCategorized::InstanceMethods
       
       has_many :categorizations,
         :as         => :categorized,
@@ -45,5 +45,3 @@ module ComfortableMexicanSofa::IsCategorized
     end
   end
 end
-
-ActiveRecord::Base.send :include, ComfortableMexicanSofa::IsCategorized

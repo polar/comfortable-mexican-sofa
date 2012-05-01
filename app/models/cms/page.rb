@@ -1,27 +1,6 @@
 # encoding: utf-8
-class Cms::Page < ActiveRecord::Base
-  
-  ComfortableMexicanSofa.establish_connection(self)
-    
-  self.table_name = 'cms_pages'
-  
-  cms_acts_as_tree :counter_cache => :children_count
-  cms_is_categorized
-  cms_is_mirrored
-  cms_has_revisions_for :blocks_attributes
-  
-  attr_accessor :tags,
-                :blocks_attributes_changed
-  
-  # -- Relationships --------------------------------------------------------
-  belongs_to :site
-  belongs_to :layout
-  belongs_to :target_page,
-    :class_name => 'Cms::Page'
-  has_many :blocks,
-    :autosave   => true,
-    :dependent  => :destroy
-  
+class Cms::Page < Cms::Orm::Page
+
   # -- Callbacks ------------------------------------------------------------
   before_validation :assigns_label,
                     :assign_parent
@@ -45,11 +24,7 @@ class Cms::Page < ActiveRecord::Base
   validates :layout,
     :presence   => true
   validate :validate_target_page
-  
-  # -- Scopes ---------------------------------------------------------------
-  default_scope order('cms_pages.position')
-  scope :published, where(:is_published => true)
-  
+
   # -- Class Methods --------------------------------------------------------
   # Tree-like structure for pages
   def self.options_for_select(site, page = nil, current_page = nil, depth = 0, exclude_self = true, spacer = '. . ')

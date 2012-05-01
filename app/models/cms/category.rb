@@ -1,13 +1,4 @@
-class Cms::Category < ActiveRecord::Base
-  
-  ComfortableMexicanSofa.establish_connection(self)
-  
-  self.table_name = 'cms_categories'
-  
-  # -- Relationships --------------------------------------------------------
-  belongs_to :site
-  has_many :categorizations,
-    :dependent => :destroy
+class Cms::Category < Cms::Orm::Category
     
   # -- Validations ----------------------------------------------------------
   validates :site_id, 
@@ -17,11 +8,6 @@ class Cms::Category < ActiveRecord::Base
     :uniqueness => { :scope => [:categorized_type, :site_id] }
   validates :categorized_type,
     :presence   => true
-    
-  # -- Scopes ---------------------------------------------------------------
-  default_scope order(:label)
-  scope :of_type, lambda { |type|
-    where(:categorized_type => type)
-  }
+
   
 end

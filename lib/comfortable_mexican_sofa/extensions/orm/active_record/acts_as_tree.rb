@@ -1,11 +1,14 @@
-module ComfortableMexicanSofa::ActsAsTree
+module ComfortableMexicanSofa::ActiveRecord::ActsAsTree
   
   def self.included(base)
+    puts "Including on #{base}"
     base.extend(ClassMethods)
+    puts "Extended on #{base}"
   end
   
   module ClassMethods
     def cms_acts_as_tree(options = {})
+      puts "Acts as Tree!"
       configuration = {
         :foreign_key    => 'parent_id', 
         :order          => nil, 
@@ -13,6 +16,8 @@ module ComfortableMexicanSofa::ActsAsTree
         :dependent      => :destroy,
         :touch          => false }
       configuration.update(options) if options.is_a?(Hash)
+
+      p configuration
       
       belongs_to :parent,
         :class_name     => name, 
@@ -27,8 +32,9 @@ module ComfortableMexicanSofa::ActsAsTree
         :dependent      => configuration[:dependent]
         
       class_eval <<-EOV
-        include ComfortableMexicanSofa::ActsAsTree::InstanceMethods
-        
+        include ComfortableMexicanSofa::ActiveRecord::ActsAsTree::InstanceMethods
+
+        puts "Setting up Roots"
         scope :roots,
           :conditions => "#{configuration[:foreign_key]} IS NULL",
           :order      => #{configuration[:order].nil? ? "nil" : %Q{"#{configuration[:order]}"}}
@@ -98,5 +104,3 @@ module ComfortableMexicanSofa::ActsAsTree
     end
   end
 end
-
-ActiveRecord::Base.send :include, ComfortableMexicanSofa::ActsAsTree

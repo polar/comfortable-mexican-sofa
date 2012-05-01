@@ -1,16 +1,5 @@
-class Cms::Layout < ActiveRecord::Base
-  
-  ComfortableMexicanSofa.establish_connection(self)
-    
-  self.table_name = 'cms_layouts'
-  
-  cms_acts_as_tree
-  cms_is_mirrored
-  cms_has_revisions_for :content, :css, :js
-  
-  # -- Relationships --------------------------------------------------------
-  belongs_to :site
-  has_many :pages, :dependent => :nullify
+class Cms::Layout < Cms::Orm::Layout
+
   
   # -- Callbacks ------------------------------------------------------------
   before_validation :assign_label
@@ -27,9 +16,7 @@ class Cms::Layout < ActiveRecord::Base
     :presence   => true,
     :uniqueness => { :scope => :site_id },
     :format     => { :with => /^\w[a-z0-9_-]*$/i }
-    
-  # -- Scopes ---------------------------------------------------------------
-  default_scope order('cms_layouts.position')
+
   
   # -- Class Methods --------------------------------------------------------
   # Tree-like structure for layouts

@@ -1,15 +1,5 @@
-class Cms::Block < ActiveRecord::Base
-  
-  ComfortableMexicanSofa.establish_connection(self)
-  
-  self.table_name = 'cms_blocks'
-  
-  # -- Relationships --------------------------------------------------------
-  belongs_to :page
-  has_many :files,
-    :autosave   => true,
-    :dependent  => :destroy
-  
+class Cms::Block < Cms::Orm::Block
+
   # -- Callbacks ------------------------------------------------------------
   before_save :prepare_files
   

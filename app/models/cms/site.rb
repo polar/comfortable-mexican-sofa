@@ -1,16 +1,5 @@
-class Cms::Site < ActiveRecord::Base
-  
-  ComfortableMexicanSofa.establish_connection(self)
-  
-  self.table_name = 'cms_sites'
-  
-  # -- Relationships --------------------------------------------------------
-  has_many :layouts,    :dependent => :delete_all
-  has_many :pages,      :dependent => :delete_all
-  has_many :snippets,   :dependent => :delete_all
-  has_many :files,      :dependent => :destroy
-  has_many :categories, :dependent => :delete_all
-  
+class Cms::Site < Cms::Orm::Site
+
   # -- Callbacks ------------------------------------------------------------
   before_validation :assign_identifier,
                     :assign_label
@@ -28,9 +17,7 @@ class Cms::Site < ActiveRecord::Base
     :presence   => true,
     :uniqueness => { :scope => :path },
     :format     => { :with => /^[\w\.\-]+$/ }
-    
-  # -- Scopes ---------------------------------------------------------------
-  scope :mirrored, where(:is_mirrored => true)
+
   
   # -- Class Methods --------------------------------------------------------
   # returning the Cms::Site instance based on host and path

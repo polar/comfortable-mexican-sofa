@@ -1,15 +1,5 @@
-class Cms::Snippet < ActiveRecord::Base
-  
-  ComfortableMexicanSofa.establish_connection(self)
-  
-  self.table_name = 'cms_snippets'
-  
-  cms_is_categorized
-  cms_is_mirrored
-  cms_has_revisions_for :content
-  
-  # -- Relationships --------------------------------------------------------
-  belongs_to :site
+class Cms::Snippet < Cms::Orm::Snippet
+
   
   # -- Callbacks ------------------------------------------------------------
   before_validation :assign_label
@@ -26,9 +16,7 @@ class Cms::Snippet < ActiveRecord::Base
     :presence   => true,
     :uniqueness => { :scope => :site_id },
     :format     => { :with => /^\w[a-z0-9_-]*$/i }
-    
-  # -- Scopes ---------------------------------------------------------------
-  default_scope order('cms_snippets.position')
+
   
 protected
   

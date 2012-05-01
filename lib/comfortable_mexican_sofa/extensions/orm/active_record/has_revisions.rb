@@ -1,4 +1,4 @@
-module ComfortableMexicanSofa::HasRevisions
+module ComfortableMexicanSofa::ActiveRecord::HasRevisions
   
   def self.included(base)
     base.send :extend, ClassMethods
@@ -8,7 +8,7 @@ module ComfortableMexicanSofa::HasRevisions
     
     def cms_has_revisions_for(*fields)
       
-      include ComfortableMexicanSofa::HasRevisions::InstanceMethods
+      include ComfortableMexicanSofa::ActiveRecord::HasRevisions::InstanceMethods
       
       attr_accessor :revision_data
       
@@ -60,5 +60,3 @@ module ComfortableMexicanSofa::HasRevisions
     end
   end
 end
-
-ActiveRecord::Base.send :include, ComfortableMexicanSofa::HasRevisions
