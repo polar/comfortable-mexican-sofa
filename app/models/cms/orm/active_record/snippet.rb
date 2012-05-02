@@ -9,15 +9,9 @@ class Cms::Orm::ActiveRecord::Snippet < ActiveRecord::Base
   
   self.table_name = 'cms_snippets'
 
-  cms_is_categorized
-  cms_is_mirrored
-  cms_has_revisions_for :content
-
   # -- Relationships --------------------------------------------------------
-  belongs_to :site
+  belongs_to :site, :class_name => "Cms::Site"
 
   # -- Scopes ---------------------------------------------------------------
   default_scope order('cms_snippets.position')
-
-  
 end

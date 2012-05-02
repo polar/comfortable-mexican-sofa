@@ -10,11 +10,11 @@ class Cms::Orm::ActiveRecord::Site < ActiveRecord::Base
   self.table_name = 'cms_sites'
   
   # -- Relationships --------------------------------------------------------
-  has_many :layouts,    :dependent => :delete_all
-  has_many :pages,      :dependent => :delete_all
-  has_many :snippets,   :dependent => :delete_all
-  has_many :files,      :dependent => :destroy
-  has_many :categories, :dependent => :delete_all
+  has_many :layouts,    :class_name => "Cms::Layout", :dependent => :delete_all
+  has_many :pages,      :class_name => "Cms::Page", :dependent => :delete_all
+  has_many :snippets,   :class_name => "Cms::Snippet", :dependent => :delete_all
+  has_many :files,      :class_name => "Cms::File", :dependent => :destroy
+  has_many :categories, :class_name => "Cms::Category", :dependent => :delete_all
 
   # -- Scopes ---------------------------------------------------------------
   scope :mirrored, where(:is_mirrored => true)

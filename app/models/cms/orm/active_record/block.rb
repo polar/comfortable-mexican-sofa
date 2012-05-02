@@ -6,13 +6,13 @@ class Cms::Orm::ActiveRecord::Block < ActiveRecord::Base
   include ComfortableMexicanSofa::ActiveRecord::IsMirrored
 
   ComfortableMexicanSofa.establish_connection(self)
-  
+
   self.table_name = 'cms_blocks'
-  
+
   # -- Relationships --------------------------------------------------------
-  belongs_to :page
-  has_many :files,
-    :autosave   => true,
-    :dependent  => :destroy
+  belongs_to :page, :class_name => "Cms::Page"
+  has_many :files, :class_name => "Cms::File",
+           :autosave           => true,
+           :dependent          => :destroy
 
 end

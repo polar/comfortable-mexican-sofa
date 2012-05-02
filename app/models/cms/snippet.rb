@@ -1,5 +1,8 @@
 class Cms::Snippet < Cms::Orm::Snippet
 
+  cms_is_categorized
+  cms_is_mirrored
+  cms_has_revisions_for :content
   
   # -- Callbacks ------------------------------------------------------------
   before_validation :assign_label

@@ -1,7 +1,9 @@
 class Cms::File < Cms::Orm::File
   
   IMAGE_MIMETYPES = %w(gif jpeg pjpeg png svg+xml tiff).collect{|subtype| "image/#{subtype}"}
-  
+
+  cms_is_categorized
+
   attr_accessor :dimensions
   
   # -- AR Extensions --------------------------------------------------------

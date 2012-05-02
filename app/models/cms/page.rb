@@ -1,6 +1,11 @@
 # encoding: utf-8
 class Cms::Page < Cms::Orm::Page
 
+  cms_acts_as_tree :counter_cache => :children_count
+  cms_is_categorized
+  cms_is_mirrored
+  cms_has_revisions_for :blocks_attributes
+
   # -- Callbacks ------------------------------------------------------------
   before_validation :assigns_label,
                     :assign_parent

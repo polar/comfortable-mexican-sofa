@@ -10,8 +10,8 @@ class Cms::Orm::ActiveRecord::Category < ActiveRecord::Base
   self.table_name = 'cms_categories'
   
   # -- Relationships --------------------------------------------------------
-  belongs_to :site
-  has_many :categorizations,
+  belongs_to :site, :class_name => "Cms::Site"
+  has_many :categorizations, :class_name => "Cms::Categorization",
     :dependent => :destroy
 
   # -- Scopes ---------------------------------------------------------------

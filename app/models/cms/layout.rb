@@ -1,6 +1,10 @@
 class Cms::Layout < Cms::Orm::Layout
 
-  
+
+  cms_acts_as_tree
+  cms_is_mirrored
+  cms_has_revisions_for :content, :css, :js
+
   # -- Callbacks ------------------------------------------------------------
   before_validation :assign_label
   before_create :assign_position
