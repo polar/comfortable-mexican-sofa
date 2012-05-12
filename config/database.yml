@@ -21,3 +21,21 @@ test:
   database: db/test.sqlite3
   pool: 5
   timeout: 10000
+
+mongodb_development:
+  adapter: mongodb
+  hostname: localhost
+  port: 27017
+  database: cms_development
+  authenticate: false
+  username: username
+  password: password
+
+mongodb_test:
+  adapter: mongodb
+  hostname: localhost
+  port: 27017
+  database: cms_test
+  authenticate: false
+  username: username
+  password: password

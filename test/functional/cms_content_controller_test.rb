@@ -4,9 +4,9 @@ class CmsContentControllerTest < ActionController::TestCase
 
   def test_render_page
     get :render_html, :cms_path => ''
-    assert_equal cms_sites(:default), assigns(:cms_site)
-    assert_equal cms_layouts(:default), assigns(:cms_layout)
-    assert_equal cms_pages(:default), assigns(:cms_page)
+    assert_equal Cms::Site.make!, assigns(:cms_site)
+    assert_equal Cms::Layout.make!, assigns(:cms_layout)
+    assert_equal Cms::Page.make!, assigns(:cms_page)
     
     assert_response :success
     assert_equal rendered_content_formatter(
@@ -23,7 +23,7 @@ class CmsContentControllerTest < ActionController::TestCase
   end
   
   def test_render_page_with_app_layout
-    cms_layouts(:default).update_attribute(:app_layout, 'cms_admin')
+    Cms::Layout.make!.update_attribute(:app_layout, 'cms_admin')
     get :render_html, :cms_path => ''
     assert_response :success
     assert assigns(:cms_page)
@@ -31,7 +31,7 @@ class CmsContentControllerTest < ActionController::TestCase
   end
   
   def test_render_page_with_xhr
-    cms_layouts(:default).update_attribute(:app_layout, 'cms_admin')
+    Cms::Layout.make!.update_attribute(:app_layout, 'cms_admin')
     xhr :get, :render_html, :cms_path => ''
     assert_response :success
     assert assigns(:cms_page)
@@ -45,11 +45,11 @@ class CmsContentControllerTest < ActionController::TestCase
   end
   
   def test_render_page_not_found_with_custom_404
-    page = cms_sites(:default).pages.create!(
+    page = Cms::Site.make!.pages.create!(
       :label          => '404',
       :slug           => '404',
-      :parent_id      => cms_pages(:default).id,
-      :layout_id      => cms_layouts(:default).id,
+      :parent_id      => Cms::Page.make!.id,
+      :layout_id      => Cms::Layout.make!.id,
       :is_published   => '1',
       :blocks_attributes => [
         { :identifier => 'default_page_text',
@@ -81,15 +81,18 @@ class CmsContentControllerTest < ActionController::TestCase
   end
   
   def test_render_page_with_redirect
-    cms_pages(:child).update_attribute(:target_page, cms_pages(:default))
-    assert_equal cms_pages(:default), cms_pages(:child).target_page
+    site = Cms::Site.make!
+    parent = Cms::Page.make!(:site => site)
+    child = Cms::Page.make!(:site => site, :parent => parent, :slug => "child-page")
+    child.update_attribute(:target_page, parent)
+    assert_equal page, child.target_page
     get :render_html, :cms_path => 'child-page'
     assert_response :redirect
     assert_redirected_to '/'
   end
   
   def test_render_page_unpublished
-    page = cms_pages(:default)
+    page = Cms::Page.make!
     page.update_attribute(:is_published, false)
     
     assert_exception_raised ActionController::RoutingError, 'Page Not Found' do
@@ -100,11 +103,11 @@ class CmsContentControllerTest < ActionController::TestCase
   def test_render_page_with_irb_disabled
     assert_equal false, ComfortableMexicanSofa.config.allow_irb
     
-    irb_page = cms_sites(:default).pages.create!(
+    irb_page = Cms::Site.make!.pages.create!(
       :label          => 'irb',
       :slug           => 'irb',
-      :parent_id      => cms_pages(:default).id,
-      :layout_id      => cms_layouts(:default).id,
+      :parent_id      => Cms::Page.make!.id,
+      :layout_id      => Cms::Layout.make!.id,
       :is_published   => '1',
       :blocks_attributes => [
         { :identifier => 'default_page_text',
@@ -119,11 +122,11 @@ class CmsContentControllerTest < ActionController::TestCase
   def test_render_page_with_irb_enabled
     ComfortableMexicanSofa.config.allow_irb = true
     
-    irb_page = cms_sites(:default).pages.create!(
+    irb_page = Cms::Site.make!.pages.create!(
       :label          => 'irb',
       :slug           => 'irb',
-      :parent_id      => cms_pages(:default).id,
-      :layout_id  => cms_layouts(:default).id,
+      :parent_id      => Cms::Page.make!.id,
+      :layout_id  => Cms::Layout.make!.id,
       :is_published   => '1',
       :blocks_attributes => [
         { :identifier => 'default_page_text',
@@ -136,26 +139,26 @@ class CmsContentControllerTest < ActionController::TestCase
   end
   
   def test_render_css
-    get :render_css, :site_id => cms_sites(:default).id, :identifier => cms_layouts(:default).identifier
+    get :render_css, :site_id => Cms::Site.make!.id, :identifier => Cms::Layout.make!.identifier
     assert_response :success
     assert_match 'text/css', response.content_type
-    assert_equal cms_layouts(:default).css, response.body
+    assert_equal Cms::Layout.make!.css, response.body
   end
   
   def test_render_css_not_found
-    get :render_css, :site_id => cms_sites(:default).id, :identifier => 'bogus'
+    get :render_css, :site_id => Cms::Site.make!.id, :identifier => 'bogus'
     assert_response 404
   end
   
   def test_render_js
-    get :render_js, :site_id => cms_sites(:default).id, :identifier => cms_layouts(:default).identifier
+    get :render_js, :site_id => Cms::Site.make!.id, :identifier => Cms::Layout.make!.identifier
     assert_response :success
     assert_equal 'text/javascript', response.content_type
-    assert_equal cms_layouts(:default).js, response.body
+    assert_equal Cms::Layout.make!.js, response.body
   end
   
   def test_render_js_not_found
-    get :render_js, :site_id => cms_sites(:default).id, :identifier => 'bogus'
+    get :render_js, :site_id => Cms::Site.make!.id, :identifier => 'bogus'
     assert_response 404
   end
 
@@ -166,22 +169,22 @@ class CmsContentControllerTest < ActionController::TestCase
   end
 
   def test_render_sitemap_with_path
-    site = cms_sites(:default)
+    site = Cms::Site.make!
     site.update_attribute(:path, 'en')
     
     get :render_sitemap, :cms_path => site.path, :format => :xml
     assert_response :success
-    assert_equal cms_sites(:default), assigns(:cms_site)
+    assert_equal Cms::Site.make!, assigns(:cms_site)
     assert_match '<loc>http://test.host/en/child-page</loc>', response.body
   end
   
   def test_render_sitemap_with_path_invalid_with_single_site
-    site = cms_sites(:default)
+    site = Cms::Site.make!
     site.update_attribute(:path, 'en')
     
     get :render_sitemap, :cms_path => 'fr', :format => :xml
     assert_response :success
-    assert_equal cms_sites(:default), assigns(:cms_site)
+    assert_equal Cms::Site.make!, assigns(:cms_site)
     assert_match '<loc>http://test.host/en/child-page</loc>', response.body
   end
 

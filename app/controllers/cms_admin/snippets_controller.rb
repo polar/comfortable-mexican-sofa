@@ -5,7 +5,8 @@ class CmsAdmin::SnippetsController < CmsAdmin::BaseController
 
   def index
     return redirect_to :action => :new if @site.snippets.count == 0
-    @snippets = @site.snippets.includes(:categories).for_category(params[:category])
+    #@snippets = @site.snippets.includes(:categories).for_category(params[:category])
+    @snippets = @site.snippets.where(:category => params[:category]).all
   end
 
   def new
@@ -44,7 +45,9 @@ class CmsAdmin::SnippetsController < CmsAdmin::BaseController
   
   def reorder
     (params[:cms_snippet] || []).each_with_index do |id, index|
-      Cms::Snippet.where(:id => id).update_all(:position => index)
+      Cms::Snippet.where(:id => id).all.each do |s|
+        s.update_attributes(:position => index)
+      end
     end
     render :nothing => true
   end
@@ -52,7 +55,7 @@ class CmsAdmin::SnippetsController < CmsAdmin::BaseController
 protected
 
   def build_snippet
-    @snippet = @site.snippets.new(params[:snippet])
+    @snippet = @site.snippets.build(params[:snippet])
   end
 
   def load_snippet

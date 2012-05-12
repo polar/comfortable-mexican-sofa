@@ -24,10 +24,11 @@ class CmsCategorizationTest < ActiveSupport::TestCase
   
   def test_categorized_relationship
     file = cms_files(:default)
+
     assert file.respond_to?(:category_ids)
-    assert_equal 1, file.categories.count
+    assert_equal 1, file.categories.count, "bad file categories count"
     assert_equal cms_categories(:default), file.categories.first
-    
+
     assert cms_snippets(:default).respond_to?(:category_ids)
     assert_equal 0, cms_snippets(:default).categories.count
     assert cms_pages(:default).respond_to?(:category_ids)
@@ -44,33 +45,34 @@ class CmsCategorizationTest < ActiveSupport::TestCase
   def test_categorized_syncing
     snippet = cms_snippets(:default)
     assert_equal 0, snippet.categories.count
-    
+
     snippet.update_attribute(:category_ids, {
-      cms_categories(:default).id => 1,
-      'invalid'                   => 1
+      cms_categories(:default).id.to_s => 1,
+      'invalid'                        => 1
     })
     snippet.reload
     assert_equal 1, snippet.categories.count
-    
+
     snippet.update_attribute(:category_ids, {
-      cms_categories(:default).id => 0,
-      'invalid'                   => 0
+      cms_categories(:default).id.to_s => 0,
+      'invalid'                        => 0
     })
     snippet.reload
     assert_equal 0, snippet.categories.count
   end
-  
+
   def test_scope_for_category
     category = cms_categories(:default)
     assert_equal 1, Cms::File.for_category(category.label).count
     assert_equal 0, Cms::File.for_category('invalid').count
     assert_equal 1, Cms::File.for_category(category.label, 'invalid').count
     assert_equal 1, Cms::File.for_category(nil).count
-    
+
     new_category = cms_sites(:default).categories.create!(:label => 'Test Category', :categorized_type => 'Cms::File')
     new_category.categorizations.create!(:categorized => cms_files(:default))
     assert_equal 1, Cms::File.for_category(category.label, new_category.label).all.size
-    assert_equal 1, Cms::File.for_category(category.label, new_category.label).count('cms_files.id', :distinct => true)
+    # AR specific on count  and its redundant given the last returns just one.
+    #assert_equal 1, Cms::File.for_category(category.label, new_category.label).count('cms_files.id', :distinct => true)
   end
   
 end

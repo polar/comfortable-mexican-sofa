@@ -8,7 +8,7 @@ module ComfortableMexicanSofa::ActiveRecord::ActsAsTree
   
   module ClassMethods
     def cms_acts_as_tree(options = {})
-      puts "Acts as Tree!"
+      puts "ActiveRecord::Acts as Tree! '#{name}'  '#{self.name} #{self.superclass.superclass.name}"
       configuration = {
         :foreign_key    => 'parent_id', 
         :order          => nil, 
@@ -86,7 +86,7 @@ module ComfortableMexicanSofa::ActiveRecord::ActsAsTree
     
     # Checks if this node is a root
     def root?
-      !self.parent
+      !self.parent_id
     end
     
     # Returns all siblings of the current node.

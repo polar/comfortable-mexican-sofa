@@ -6,17 +6,18 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
   
   def index
     return redirect_to :action => :new if @site.files.count == 0
-    @files = @site.files.includes(:categories).for_category(params[:category]).all(:order => 'cms_files.position')
+    #@files = @site.files.includes(:categories).for_category(params[:category]).all(:order => 'cms_files.position')
+    @files = @site.files.where(:category => params[:category]).order(:position).all
   end
   
   def new
-    @file = @site.files.new
+    @file = @site.files.build
   end
 
   def create
     respond_to do |format|
       format.html do
-        @file = @site.files.new
+        @file = @site.files.build
         file_array  = params[:file][:file] || [nil]
         label       = params[:file][:label]
         

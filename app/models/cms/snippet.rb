@@ -32,12 +32,16 @@ protected
   # are hundreds of pages.
   def clear_cached_page_content
     site.pages.all.each do |p|
-      Cms::Page.where(:id => p.id).update_all(:content => p.content(true))
+      Cms::Page.where(:id => p.id).all.each do |p|
+        p.update_attributes(:content => p.content(true))
+      end
     end
   end
-  
+
   def assign_position
-    max = self.site.snippets.maximum(:position)
+    # Processing Content will generate new ones, However in MongoMapper.
+    # map seems to grab them. So, we set the default position to -1.
+    max = self.site.snippets.map(&:position).max
     self.position = max ? max + 1 : 0
   end
   

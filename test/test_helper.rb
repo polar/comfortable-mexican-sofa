@@ -1,18 +1,30 @@
 # encoding: utf-8
 
+require "mongo_mapper"
+require "machinist/mongo_mapper"
+
+require "database_cleaner"
+
 ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../../config/environment', __FILE__)
+
 require 'rails/test_help'
+require "blueprint_fixture_map"
 
 # No need to add cache-busters in test environment
 Paperclip::Attachment.default_options[:use_timestamp] = false
 
+
 class ActiveSupport::TestCase
-  fixtures :all
+  #fixtures :all
   include ActionDispatch::TestProcess
-  
+  include BlueprintFixtureMap
+
   def setup
+    DatabaseCleaner.clean
+    setup_blueprints
     reset_config
+    puts "****************************END OF SETUP *******************************************"
   end
   
   # resetting default configuration

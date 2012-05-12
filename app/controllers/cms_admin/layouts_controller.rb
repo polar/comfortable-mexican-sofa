@@ -52,7 +52,7 @@ class CmsAdmin::LayoutsController < CmsAdmin::BaseController
 protected
 
   def build_layout
-    @layout = @site.layouts.new(params[:layout])
+    @layout = @site.layouts.build(params[:layout])
     @layout.parent  ||= Cms::Layout.find_by_id(params[:parent_id])
     @layout.content ||= '{{ cms:page:content:text }}'
   end

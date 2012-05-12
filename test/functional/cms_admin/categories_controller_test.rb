@@ -3,21 +3,21 @@ require File.expand_path('../../test_helper', File.dirname(__FILE__))
 class CmsAdmin::CategoriesControllerTest < ActionController::TestCase
   
   def test_get_edit
-    xhr :get, :edit, :site_id => cms_sites(:default), :id => cms_categories(:default)
+    xhr :get, :edit, :site_id => Cms::Site.make!, :id => Cms::Category.make!
     assert_response :success
     assert_template :edit
     assert assigns(:category)
   end
   
   def test_get_edit_failure
-    xhr :get, :edit, :site_id => cms_sites(:default), :id => 'invalid'
+    xhr :get, :edit, :site_id => Cms::Site.make!, :id => 'invalid'
     assert_response :success
     assert response.body.blank?
   end
   
   def test_creation
     assert_difference 'Cms::Category.count' do
-      xhr :post, :create, :site_id => cms_sites(:default), :category => {
+      xhr :post, :create, :site_id => Cms::Site.make!, :category => {
         :label            => 'Test Label',
         :categorized_type => 'Cms::Snippet'
       }
@@ -29,15 +29,15 @@ class CmsAdmin::CategoriesControllerTest < ActionController::TestCase
   
   def test_creation_failure
     assert_no_difference 'Cms::Category.count' do
-      xhr :post, :create, :site_id => cms_sites(:default), :category => { }
+      xhr :post, :create, :site_id => Cms::Site.make!, :category => { }
       assert_response :success
       assert response.body.blank?
     end
   end
   
   def test_update
-    category = cms_categories(:default)
-    xhr :put, :update, :site_id => cms_sites(:default), :id => category, :category => {
+    category = Cms::Category.make!
+    xhr :put, :update, :site_id => Cms::Site.make!, :id => category, :category => {
       :label => 'Updated Label'
     }
     assert_response :success
@@ -48,8 +48,8 @@ class CmsAdmin::CategoriesControllerTest < ActionController::TestCase
   end
   
   def test_update_failure
-    category = cms_categories(:default)
-    xhr :put, :update, :site_id => cms_sites(:default), :id => category, :category => {
+    category = Cms::Category.make!
+    xhr :put, :update, :site_id => Cms::Site.make!, :id => category, :category => {
       :label => ''
     }
     assert_response :success
@@ -60,7 +60,7 @@ class CmsAdmin::CategoriesControllerTest < ActionController::TestCase
   
   def test_destroy
     assert_difference 'Cms::Category.count', -1 do
-      xhr :delete, :destroy, :site_id => cms_sites(:default), :id => cms_categories(:default)
+      xhr :delete, :destroy, :site_id => Cms::Site.make!, :id => Cms::Category.make!
       assert assigns(:category)
       assert_response :success
       assert_template :destroy

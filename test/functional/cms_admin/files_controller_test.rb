@@ -3,7 +3,7 @@ require File.expand_path('../../test_helper', File.dirname(__FILE__))
 class CmsAdmin::FilesControllerTest < ActionController::TestCase
   
   def test_get_index
-    get :index, :site_id => cms_sites(:default)
+    get :index, :site_id => Cms::Site.make!
     assert_response :success
     assert assigns(:files)
     assert_template :index
@@ -11,28 +11,28 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   
   def test_get_index_with_no_files
     Cms::File.delete_all
-    get :index, :site_id => cms_sites(:default)
+    get :index, :site_id => Cms::Site.make!
     assert_response :redirect
     assert_redirected_to :action => :new
   end
   
   def test_get_index_with_category
-    get :index, :site_id => cms_sites(:default), :category => cms_categories(:default).label
+    get :index, :site_id => Cms::Site.make!, :category => Cms::Category.make!.label
     assert_response :success
     assert assigns(:files)
     assert_equal 1, assigns(:files).count
-    assert assigns(:files).first.categories.member? cms_categories(:default)
+    assert assigns(:files).first.categories.member? Cms::Category.make!
   end
   
   def test_get_index_with_category_invalid
-    get :index, :site_id => cms_sites(:default), :category => 'invalid'
+    get :index, :site_id => Cms::Site.make!, :category => 'invalid'
     assert_response :success
     assert assigns(:files)
     assert_equal 0, assigns(:files).count
   end
   
   def test_get_new
-    site = cms_sites(:default)
+    site = Cms::Site.make!
     get :new, :site_id => site
     assert_response :success
     assert assigns(:file)
@@ -41,7 +41,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   end
   
   def test_get_edit
-    file = cms_files(:default)
+    file = Cms::File.make!
     get :edit, :site_id => file.site, :id => file
     assert_response :success
     assert assigns(:file)
@@ -50,7 +50,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   end
   
   def test_get_edit_failure
-    get :edit, :site_id => cms_sites(:default), :id => 'not_found'
+    get :edit, :site_id => Cms::Site.make!, :id => 'not_found'
     assert_response :redirect
     assert_redirected_to :action => :index
     assert_equal 'File not found', flash[:error]
@@ -58,14 +58,14 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   
   def test_create
     assert_difference 'Cms::File.count' do
-      post :create, :site_id => cms_sites(:default), :file => {
+      post :create, :site_id => Cms::Site.make!, :file => {
         :label        => 'Test File',
         :description  => 'Test Description',
         :file         => [fixture_file_upload('files/image.jpg', "image/jpeg")]
       }
       assert_response :redirect
       file = Cms::File.last
-      assert_equal cms_sites(:default), file.site
+      assert_equal Cms::Site.make!, file.site
       assert_equal 'Test File', file.label
       assert_equal 'Test Description', file.description
       assert_redirected_to :action => :edit, :id => file
@@ -75,7 +75,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   
   def test_create_failure
     assert_no_difference 'Cms::File.count' do
-      post :create, :site_id => cms_sites(:default), :file => { }
+      post :create, :site_id => Cms::Site.make!, :file => { }
       assert_response :success
       assert_template :new
       assert_equal 'Failed to upload files', flash[:error]
@@ -86,7 +86,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
     Cms::File.delete_all
     
     assert_difference 'Cms::File.count', 2 do
-      post :create, :site_id => cms_sites(:default), :file => {
+      post :create, :site_id => Cms::Site.make!, :file => {
         :label        => 'Test File',
         :description  => 'Test Description',
         :file         => [
@@ -96,7 +96,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
       }
       assert_response :redirect
       file_a, file_b = Cms::File.all
-      assert_equal cms_sites(:default), file_a.site
+      assert_equal Cms::Site.make!, file_a.site
       
       assert_equal 'image.jpg', file_a.file_file_name
       assert_equal 'image.gif', file_b.file_file_name
@@ -116,7 +116,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
     request.env['RAW_POST_DATA'] = File.open(File.expand_path('../../fixtures/files/image.jpg', File.dirname(__FILE__)))
     
     assert_difference 'Cms::File.count' do
-      xhr :post, :create, :site_id => cms_sites(:default)
+      xhr :post, :create, :site_id => Cms::Site.make!
       assert_response :success
       
       file = Cms::File.last
@@ -126,7 +126,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   end
   
   def test_update
-    file = cms_files(:default)
+    file = Cms::File.make!
     put :update, :site_id => file.site, :id => file, :file => {
       :label        => 'New File',
       :description  => 'New Description'
@@ -140,7 +140,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   end
   
   def test_update_failure
-    file = cms_files(:default)
+    file = Cms::File.make!
     put :update, :site_id => file.site, :id => file, :file => {
       :file         => nil
     }
@@ -153,7 +153,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   
   def test_destroy
     assert_difference 'Cms::File.count', -1 do
-      delete :destroy, :site_id => cms_sites(:default), :id => cms_files(:default)
+      delete :destroy, :site_id => Cms::Site.make!, :id => Cms::File.make!
       assert_response :redirect
       assert_redirected_to :action => :index
       assert_equal 'File deleted', flash[:notice]
@@ -162,20 +162,20 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   
   def test_destroy_as_xhr
     assert_difference 'Cms::File.count', -1 do
-      xhr :delete, :destroy, :site_id => cms_sites(:default), :id => cms_files(:default)
+      xhr :delete, :destroy, :site_id => Cms::Site.make!, :id => Cms::File.make!
       assert_response :success
     end
   end
   
   def test_reorder
-    file_one = cms_files(:default)
-    file_two = cms_sites(:default).files.create(
+    file_one = Cms::File.make!
+    file_two = Cms::Site.make!.files.create(
       :file => fixture_file_upload('files/image.jpg', "image/jpeg")
     )
     assert_equal 0, file_one.position
     assert_equal 1, file_two.position
 
-    put :reorder, :site_id => cms_sites(:default), :cms_file => [file_two.id, file_one.id]
+    put :reorder, :site_id => Cms::Site.make!, :cms_file => [file_two.id, file_one.id]
     assert_response :success
     file_one.reload
     file_two.reload

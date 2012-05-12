@@ -96,7 +96,9 @@ ComfortableMexicanSofa.configure do |config|
   # e.g. config.site_aliases = {'host.com' => 'host.inv', 'host_a.com' => ['host.lvh.me', 'host.dev']}
   # Default is nil (not used)
   #   config.hostname_aliases = nil
-  
+
+  # config.backend = :active_record
+  config.backend = :mongo_mapper
 end
 
 # Default credentials for ComfortableMexicanSofa::HttpAuth

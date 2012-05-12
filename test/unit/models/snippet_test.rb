@@ -6,6 +6,7 @@ class CmsSnippetTest < ActiveSupport::TestCase
     Cms::Snippet.all.each do |snippet|
       assert snippet.valid?, snippet.errors.full_messages.to_s
     end
+    assert_equal "default_snippet_content", cms_snippets(:default).content
   end
   
   def test_validations
@@ -16,7 +17,7 @@ class CmsSnippetTest < ActiveSupport::TestCase
   end
   
   def test_label_assignment
-    snippet = cms_sites(:default).snippets.new(
+    snippet = cms_sites(:default).snippets.build(
       :identifier => 'test'
     )
     assert snippet.valid?

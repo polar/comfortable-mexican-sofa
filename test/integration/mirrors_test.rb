@@ -3,7 +3,7 @@ require File.expand_path('../test_helper', File.dirname(__FILE__))
 class MirrorsTest < ActionDispatch::IntegrationTest
   
   def setup
-    @site_a = cms_sites(:default)
+    @site_a = Cms::Site.make!
     @site_a.update_attribute(:is_mirrored, true)
     @site_b = Cms::Site.create!(:identifier => 'test_b', :hostname => 'test-b.host', :is_mirrored => true)
     # making mirrors
@@ -21,7 +21,7 @@ class MirrorsTest < ActionDispatch::IntegrationTest
   end
   
   def test_get_layouts_edit
-    layout = cms_layouts(:default)
+    layout = Cms::Layout.make!
     assert mirror = layout.mirrors.first
     
     http_auth :get, edit_cms_admin_site_layout_path(@site_a, layout)
@@ -40,7 +40,7 @@ class MirrorsTest < ActionDispatch::IntegrationTest
   end
   
   def test_get_pages_edit
-    page = cms_pages(:default)
+    page = Cms::Page.make!
     assert mirror = page.mirrors.first
     
     http_auth :get, edit_cms_admin_site_page_path(@site_a, page)
@@ -59,7 +59,7 @@ class MirrorsTest < ActionDispatch::IntegrationTest
   end
   
   def test_get_snippets_edit
-    snippet = cms_snippets(:default)
+    snippet = Cms::Snippet.make!
     assert mirror = snippet.mirrors.first
     
     http_auth :get, edit_cms_admin_site_snippet_path(@site_a, snippet)

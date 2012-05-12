@@ -39,7 +39,7 @@ protected
   end
   
   def assign_position
-    max = Cms::File.maximum(:position)
+    max = Cms::File.all.map(&:position).max
     self.position = max ? max + 1 : 0
   end
   
@@ -47,7 +47,13 @@ protected
   def reload_page_cache
     return unless self.block
     p = self.block.page
-    Cms::Page.where(:id => p.id).update_all(:content => p.content(true))
+    # TODO: This causes a save on the page, which calls a save on a File Block
+    # which causes a save on the page, etc.
+    Cms::Page.where(:id => p.id).all.each do |p|
+      #p.update_attributes(:content_cache => p.content(true))
+      p.content_dirty = true
+     # p.save
+    end
   end
   
 end

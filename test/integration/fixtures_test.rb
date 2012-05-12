@@ -6,7 +6,7 @@ class FixturesTest < ActionDispatch::IntegrationTest
   
   def setup
     host! 'example.com'
-    cms_sites(:default).update_attribute(:hostname, 'example.com')
+    Cms::Site.make!.update_attribute(:hostname, 'example.com')
   end
   
   def test_fixtures_disabled
@@ -51,7 +51,7 @@ class FixturesTest < ActionDispatch::IntegrationTest
     assert_difference 'Cms::Page.count', 2 do
       assert_difference 'Cms::Layout.count', 2 do
         assert_difference 'Cms::Snippet.count', 1 do
-           http_auth :get, "/cms-admin/sites/#{cms_sites(:default).id}/pages"
+           http_auth :get, "/cms-admin/sites/#{Cms::Site.make!.id}/pages"
            assert_response :success
            assert_equal 'CMS Fixtures are enabled. All changes done here will be discarded.', flash[:error]
         end

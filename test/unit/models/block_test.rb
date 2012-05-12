@@ -1,7 +1,7 @@
 require File.expand_path('../../test_helper', File.dirname(__FILE__))
 
 class CmsBlockTest < ActiveSupport::TestCase
-  
+
   def test_fixtures_validity
     Cms::Block.all.each do |block|
       assert block.valid?, block.errors.full_messages.to_s
@@ -35,7 +35,7 @@ class CmsBlockTest < ActiveSupport::TestCase
       assert_equal 'test_content', block.content
     end
   end
-  
+
   def test_creation_via_page_nested_attributes_as_hash
     assert_difference ['Cms::Page.count', 'Cms::Block.count'] do
       page = Cms::Page.create!(
@@ -46,8 +46,8 @@ class CmsBlockTest < ActiveSupport::TestCase
         :parent_id  => cms_pages(:default).id,
         :blocks_attributes => {
           '0' => {
-            :identifier => 'default_page_text',
-            :content    => 'test_content'
+              :identifier => 'default_page_text',
+              :content    => 'test_content'
           }
         }
       )
@@ -57,7 +57,7 @@ class CmsBlockTest < ActiveSupport::TestCase
       assert_equal 'test_content', block.content
     end
   end
-  
+
   def test_creation_via_page_nested_attributes_as_hash_with_duplicates
     assert_difference ['Cms::Page.count', 'Cms::Block.count'] do
       page = Cms::Page.create!(
@@ -83,11 +83,12 @@ class CmsBlockTest < ActiveSupport::TestCase
       assert_equal 'test_content', block.content
     end
   end
+
   
   def test_creation_and_update_via_nested_attributes_with_file
     layout = cms_layouts(:default)
     layout.update_attribute(:content, '{{cms:page_file:file}}')
-    
+
     page = nil
     assert_difference ['Cms::Page.count', 'Cms::Block.count', 'Cms::File.count'] do
       page = Cms::Page.create!(
@@ -101,15 +102,16 @@ class CmsBlockTest < ActiveSupport::TestCase
             :content    => [fixture_file_upload('files/image.jpg', "image/jpeg"), fixture_file_upload('files/document.pdf', "application/pdf")] }
         ]
       )
-      assert_equal 1, page.blocks.count
+      assert_equal layout, page.layout, "bad layout"
+      assert_equal 1, page.blocks.count, "bad blocks count"
       block = page.blocks.first
-      assert_equal 'file', block.identifier
-      assert_equal nil, block.content
-      assert_equal 1, block.files.count
-      assert_equal 'image.jpg', block.files.first.file_file_name
-      
+      assert_equal 'file', block.identifier, "bad block identifier"
+      assert_equal nil, block.content, "bad block content"
+      assert_equal 1, block.files.count, "bad file count"
+      assert_equal 'image.jpg', block.files.first.file_file_name, "Bad file name"
+
       page.reload
-      assert_equal block.files.first.file.url, page.content
+      assert_equal block.files.first.file.url, page.content(true), "bad page content"
     end
     
     assert_no_difference ['Cms::Block.count', 'Cms::File.count'] do
@@ -119,11 +121,14 @@ class CmsBlockTest < ActiveSupport::TestCase
             :content    => fixture_file_upload('files/document.pdf', "application/pdf") }
         ]
       )
+      assert_equal 1, page.blocks.count, "bad blocks count after update"
       page.reload
+      page.content(true)
       block = page.blocks.first
-      assert_equal 1, block.files.count
-      assert_equal 'document.pdf', block.files.first.file_file_name
-      assert_equal block.files.first.file.url, page.content
+      p block
+      assert_equal 1, block.files.count, "bad files count after update"
+      assert_equal 'document.pdf', block.files.first.file_file_name, "bad filename after update"
+      assert_equal block.files.first.file.url, page.content, "bad content after update"
     end
   end
   

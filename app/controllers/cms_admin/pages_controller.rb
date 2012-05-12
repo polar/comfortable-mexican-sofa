@@ -9,9 +9,10 @@ class CmsAdmin::PagesController < CmsAdmin::BaseController
   def index
     return redirect_to :action => :new if @site.pages.count == 0
     if params[:category].present?
-      @pages = @site.pages.includes(:categories).for_category(params[:category]).all(:order => 'label')
+      #@pages = @site.pages.includes(:categories).for_category(params[:category]).all(:order => 'label')
+      @pages = @site.pages.where(:categories => params[:category]).order(:label).all
     else
-      @pages = [@site.pages.root].compact
+      @pages = [@site.pages.roots.first].compact
     end
   end
 
@@ -50,7 +51,7 @@ class CmsAdmin::PagesController < CmsAdmin::BaseController
   end
 
   def form_blocks
-    @page = @site.pages.find_by_id(params[:id]) || @site.pages.new
+    @page = @site.pages.find_by_id(params[:id]) || @site.pages.build
     @page.layout = @site.layouts.find_by_id(params[:layout_id])
   end
 
@@ -80,9 +81,9 @@ protected
   end
 
   def build_cms_page
-    @page = @site.pages.new(params[:page])
-    @page.parent ||= (@site.pages.find_by_id(params[:parent_id]) || @site.pages.root)
-    @page.layout ||= (@page.parent && @page.parent.layout || @site.layouts.first)
+    @page = @site.pages.build(params[:page])
+    @page.parent ||= (@site.pages.find_by_id(params[:parent_id]) || @site.pages.roots.first)
+    @page.layout ||= (@page.parent && @page.parent.layout || @site.layouts.roots.first)
   end
 
   def build_file
@@ -92,7 +93,7 @@ protected
   def load_cms_page
     @page = @site.pages.find(params[:id])
     @page.attributes = params[:page]
-    @page.layout ||= (@page.parent && @page.parent.layout || @site.layouts.first)
+    @page.layout ||= (@page.parent && @page.parent.layout || @site.layouts.roots.first)
   rescue ActiveRecord::RecordNotFound
     flash[:error] = I18n.t('cms.pages.not_found')
     redirect_to :action => :index

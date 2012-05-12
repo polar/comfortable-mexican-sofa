@@ -17,6 +17,7 @@ end
   'comfortable_mexican_sofa/fixtures',
   'comfortable_mexican_sofa/extensions/rails',
   'comfortable_mexican_sofa/extensions/orm/active_record',
+  'comfortable_mexican_sofa/extensions/orm/mongo_mapper',
 ].each do |path|
   require File.expand_path(path, File.dirname(__FILE__))
 end

@@ -2,7 +2,7 @@
 
 require 'csv'
 
-# This module provides all Tag classes with neccessary methods.
+# This module provides all Tag classes with necessary methods.
 # Example class that will behave as a Tag:
 #   class MySpecialTag
 #     include ComfortableMexicanSofa::Tag
@@ -49,7 +49,7 @@ module ComfortableMexicanSofa::Tag
   
   module InstanceMethods
     
-    # String indentifier of the tag
+    # String identifier of the tag
     def id
       "#{self.class.to_s.demodulize.underscore}_#{self.identifier}"
     end
@@ -68,7 +68,7 @@ module ComfortableMexicanSofa::Tag
       self.class.regex_tag_signature(identifier)
     end
     
-    # Content that is accociated with Tag instance.
+    # Content that is associated with Tag instance.
     def content
       nil
     end

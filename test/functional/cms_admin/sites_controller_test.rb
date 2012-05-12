@@ -26,7 +26,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   end
 
   def test_get_edit
-    site = cms_sites(:default)
+    site = Cms::Site.make!
     get :edit, :id => site
     assert_response :success
     assert assigns(:site)
@@ -65,7 +65,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   end
 
   def test_update
-    site = cms_sites(:default)
+    site = Cms::Site.make!
     put :update, :id => site, :site => {
       :label    => 'New Site',
       :hostname => 'new.site.local'
@@ -79,7 +79,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   end
 
   def test_update_failure
-    site = cms_sites(:default)
+    site = Cms::Site.make!
     put :update, :id => site, :site => {
       :hostname => ''
     }
@@ -92,7 +92,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
 
   def test_destroy
     assert_difference 'Cms::Site.count', -1 do
-      delete :destroy, :id => cms_sites(:default)
+      delete :destroy, :id => Cms::Site.make!
       assert_response :redirect
       assert_redirected_to :action => :index
       assert_equal 'Site deleted', flash[:notice]

@@ -12,11 +12,11 @@
 <%= form.text_field :label, :id => (@page.new_record?? 'slugify' : nil) %>
 
 <div class='page_form_extras'>
-  <% unless @site.pages.count == 0 || @site.pages.root == @page%>
+  <% unless @site.pages.count == 0 || @site.pages.roots.first == @page%>
     <%= form.text_field :slug, :id => 'slug' %>
   <% end %>
   <% if (options = Cms::Layout.options_for_select(@site)).present? %>
-    <%= form.select :layout_id, options, {}, 'data-url' => form_blocks_cms_admin_site_page_path(@site, @page.id.to_i) %>
+    <%= form.select :layout_id, options, {}, 'data-url' => form_blocks_cms_admin_site_page_path(@page.id, :site_id => @site.id) %>
   <% end %>
   <% if (options = Cms::Page.options_for_select(@site, @page)).present? %>
     <%= form.select :parent_id, options %>

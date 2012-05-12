@@ -59,17 +59,7 @@ protected
     self.path.squeeze!('/')
     self.path.gsub!(/\/$/, '')
   end
-  
-  # When site is marked as a mirror we need to sync its structure
-  # with other mirrors.
-  def sync_mirrors
-    return unless is_mirrored_changed? && is_mirrored?
-    
-    [self, Cms::Site.mirrored.where("id != #{id}").first].compact.each do |site|
-      (site.layouts(:reload).roots + site.layouts.roots.map(&:descendants)).flatten.map(&:sync_mirror)
-      (site.pages(:reload).roots + site.pages.roots.map(&:descendants)).flatten.map(&:sync_mirror)
-      site.snippets(:reload).map(&:sync_mirror)
-    end
-  end
+
+  # sync_mirrors is defined in the particular Orm superclass.
   
 end

@@ -5,7 +5,7 @@ class SitesTest < ActionDispatch::IntegrationTest
   def test_get_admin_with_single_site
     http_auth :get, cms_admin_path
     assert assigns(:site)
-    assert_equal cms_sites(:default), assigns(:site)
+    assert_equal Cms::Site.make!, assigns(:site)
     assert_response :redirect
     assert_redirected_to cms_admin_site_pages_path(assigns(:site))
   end
@@ -66,7 +66,7 @@ class SitesTest < ActionDispatch::IntegrationTest
     assert assigns(:cms_site)
     assert_equal :en, I18n.locale
     
-    cms_sites(:default).update_attribute(:locale, 'fr')
+    Cms::Site.make!.update_attribute(:locale, 'fr')
     get '/'
     assert_response :success
     assert assigns(:cms_site)
@@ -74,12 +74,12 @@ class SitesTest < ActionDispatch::IntegrationTest
   end
   
   def test_get_admin_with_locale
-    http_auth :get, cms_admin_site_pages_path(cms_sites(:default))
+    http_auth :get, cms_admin_site_pages_path(Cms::Site.make!)
     assert_response :success
     assert_equal :en, I18n.locale
     
-    cms_sites(:default).update_attribute(:locale, 'fr')
-    http_auth :get, cms_admin_site_pages_path(cms_sites(:default))
+    Cms::Site.make!.update_attribute(:locale, 'fr')
+    http_auth :get, cms_admin_site_pages_path(Cms::Site.make!)
     assert_response :success
     assert_equal :fr, I18n.locale
   end
@@ -87,8 +87,8 @@ class SitesTest < ActionDispatch::IntegrationTest
   def test_get_admin_with_forced_locale
     ComfortableMexicanSofa.config.admin_locale = :en
     
-    cms_sites(:default).update_attribute(:locale, 'fr')
-    http_auth :get, cms_admin_site_pages_path(cms_sites(:default))
+    Cms::Site.make!.update_attribute(:locale, 'fr')
+    http_auth :get, cms_admin_site_pages_path(Cms::Site.make!)
     assert_response :success
     assert_equal :en, I18n.locale
 
