@@ -8,9 +8,15 @@ require "blueprints/page"
 require "blueprints/revision"
 require "blueprints/site"
 require "blueprints/snippet"
-require "blueprints/eatme"
 
-DatabaseCleaner[:mongo_mapper].strategy = :truncation
+if ComfortableMexicanSofa.config.backend.to_s == "mongo_mapper"
+  DatabaseCleaner[:mongo_mapper].strategy = :truncation
+end
+
+if ComfortableMexicanSofa.config.backend.to_s == "active_record"
+  DatabaseCleaner[:active_record].strategy = :truncation
+end
+
 
 module BlueprintFixtureMap
 
@@ -61,6 +67,7 @@ module BlueprintFixtureMap
     site.categories << category
     file = Cms::File.make(:default)
     site.files << file
+    site.save!
 
     page = Cms::Page.make(:default, :layout => layout)
     site.pages << page
@@ -68,18 +75,22 @@ module BlueprintFixtureMap
     assert page.persisted?, "page was not saved."
 
     block1 = page.blocks.first
-    block1.content = "\ndefault_page_text_content_a\n{{cms:snippet:default}}\ndefault_page_text_content_b"
+    block1.content = "default_page_text_content_a\n{{cms:snippet:default}}\ndefault_page_text_content_b"
     block1.save!
     block2 = Cms::Block.make(:default_field_text)
     page.blocks << block2
 
-    categorization = Cms::Categorization.make!(:default, :category => category, :categorized => file, :categorized_type => "Cms::File")
+    assert_equal 2, page.blocks.count
+
+    categorization = Cms::Categorization.make!(:default, :category => category, :categorized => file)
+    file.reload
+
     # Need to update page.  This would happen automatically if we used sites.snippets.create!
     page.save!
     assert_equal 2, page.blocks.count
-    assert_equal "\ndefault_page_text_content_a\n{{cms:snippet:default}}\ndefault_page_text_content_b", block1.content
+    assert_equal "default_page_text_content_a\n{{cms:snippet:default}}\ndefault_page_text_content_b", block1.content
     assert_equal "default_field_text_content", block2.content
-    assert_equal "\nlayout_content_a\n\ndefault_page_text_content_a\ndefault_snippet_content\ndefault_page_text_content_b\nlayout_content_b\ndefault_snippet_content\nlayout_content_c", page.content_cache
+    assert_equal "\nlayout_content_a\ndefault_page_text_content_a\ndefault_snippet_content\ndefault_page_text_content_b\nlayout_content_b\ndefault_snippet_content\nlayout_content_c", page.content_cache
 
     @cms_blocks = { :default_field_text => block1, :default_page_text => block2 }
     @cms_pages = {:default => page }
@@ -106,16 +117,23 @@ module BlueprintFixtureMap
     site.layouts << @cms_layouts[:child]
 
     @cms_pages[:child] =
-        Cms::Page.make(:child, :layout => layout)
+        Cms::Page.make(:child, :layout => layout, :parent => page)
     site.pages << @cms_pages[:child]
 
     @cms_revisions[:layout] =
-        Cms::Revision.make!(:layout, :record => layout, :record_type => "Cms::Layout")
+        Cms::Revision.make!(:layout, :record => layout)
     @cms_revisions[:page] =
-        Cms::Revision.make!(:page, :record => page, :record_type => "Cms::Page")
+        Cms::Revision.make!(:page, :record => page)
     @cms_revisions[:snippet] =
-        Cms::Revision.make!(:snippet, :record => snippet, :record_type => "Cms::Snippet")
+        Cms::Revision.make!(:snippet, :record => snippet)
 
+    page.reload
+    layout.reload
+    @cms_layouts[:child].reload
+    @cms_layouts[:nested].reload
+    snippet.reload
+    site.reload
+    @cms_pages[:child].reload
   end
 end
 

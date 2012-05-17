@@ -6,8 +6,9 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
   
   def index
     return redirect_to :action => :new if @site.files.count == 0
+    #TODO: fix for ActiveRecord
     #@files = @site.files.includes(:categories).for_category(params[:category]).all(:order => 'cms_files.position')
-    @files = @site.files.where(:category => params[:category]).order(:position).all
+    @files = @site.files.categorized(params[:category]).order(:position).all
   end
   
   def new
@@ -60,7 +61,7 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
         )
       end
     end
-  rescue ActiveRecord::RecordInvalid
+  rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     respond_to do |format|
       format.html do
@@ -77,7 +78,7 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
     @file.update_attributes!(params[:file])
     flash[:notice] = I18n.t('cms.files.updated')
     redirect_to :action => :edit, :id => @file
-  rescue ActiveRecord::RecordInvalid
+  rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.files.update_failure')
     render :action => :edit
@@ -107,7 +108,8 @@ protected
   
   def load_file
     @file = @site.files.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
+    raise ComfortableMexicanSofa.ModelNotFound if @file.nil?
+  rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.files.not_found')
     redirect_to :action => :index
   end

@@ -4,7 +4,7 @@ class CollectionTagTest < ActiveSupport::TestCase
   
   module TestCollectionScope
     def self.included(base)
-      base.scope :cms_collection, lambda{|*args| base.where(:identifier => args.first) if args.first }
+      base.scope :cms_collection, lambda{|*args|  base.where(args.first ? {:identifier => args.first} : {}) }
     end
   end
   Cms::Snippet.send(:include, TestCollectionScope)
@@ -79,10 +79,10 @@ class CollectionTagTest < ActiveSupport::TestCase
     assert tag.block.content.blank?
     
     snippet = cms_snippets(:default)
-    tag.block.content = snippet.id
-    assert_equal snippet.id, tag.block.content
-    assert_equal snippet.id, tag.content
-    assert_equal "<%= render :partial => 'partials/cms/snippets', :locals => {:model => 'Cms::Snippet', :identifier => '#{snippet.id}'} %>", tag.render
+    tag.block.content = snippet.id.to_s
+    assert_equal snippet.id.to_s, tag.block.content
+    assert_equal snippet.id.to_s, tag.content
+    assert_equal "<%= render :partial => 'partials/cms/snippets', :locals => {:model => 'Cms::Snippet', :identifier => '#{snippet.id.to_s}'} %>", tag.render
   end
   
   def test_content_and_render_detailed

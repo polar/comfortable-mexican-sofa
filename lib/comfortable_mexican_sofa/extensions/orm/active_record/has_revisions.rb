@@ -13,8 +13,19 @@ module ComfortableMexicanSofa::ActiveRecord::HasRevisions
       attr_accessor :revision_data
       
       has_many :revisions,
+        :class_name => "Cms::Revision",
         :as         => :record,
-        :dependent  => :destroy
+        :dependent  => :destroy do
+
+        def excluded(*ids)
+          if (ids = [ids].flatten.compact).present?
+            where("id NOT IN(?)", ids)
+          else
+            where()
+          end
+        end
+
+      end
       
       before_save :prepare_revision
       after_save  :create_revision
@@ -50,10 +61,10 @@ module ComfortableMexicanSofa::ActiveRecord::HasRevisions
       
       # blowing away old revisions
       ids = [0] + self.revisions.limit(ComfortableMexicanSofa.config.revisions_limit.to_i).collect(&:id)
-      self.revisions.where('id NOT IN (?)', ids).destroy_all
+      self.revisions.excluded(ids).all.each {|r| r.destroy }
     end
     
-    # Assigning whatever is found in revision data and attemptint to save the object
+    # Assigning whatever is found in revision data and attempting to save the object
     def restore_from_revision(revision)
       return unless revision.record == self
       self.update_attributes!(revision.data)

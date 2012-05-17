@@ -56,6 +56,25 @@ module ComfortableMexicanSofa
       end
     end
 
+    def ModelInvalid
+      if @configuration.backend.to_s == "active_record"
+        return ::ActiveRecord::RecordInvalid
+      end
+      if @configuration.backend.to_s == "mongo_mapper"
+        return ::MongoMapper::DocumentNotValid
+      end
+
+    end
+    def ModelNotFound
+      if @configuration.backend.to_s == "active_record"
+        return ::ActiveRecord::RecordNotFound
+      end
+      if @configuration.backend.to_s == "mongo_mapper"
+        return ::MongoMapper::DocumentNotFound
+      end
+    end
+
+
     def logger=(new_logger)
       @logger = new_logger
     end

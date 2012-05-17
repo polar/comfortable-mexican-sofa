@@ -10,6 +10,7 @@ module ComfortableMexicanSofa::ActiveRecord::ActsAsTree
     def cms_acts_as_tree(options = {})
       puts "ActiveRecord::Acts as Tree! '#{name}'  '#{self.name} #{self.superclass.superclass.name}"
       configuration = {
+        :class_name     => name,
         :foreign_key    => 'parent_id', 
         :order          => nil, 
         :counter_cache  => nil,
@@ -20,13 +21,13 @@ module ComfortableMexicanSofa::ActiveRecord::ActsAsTree
       p configuration
       
       belongs_to :parent,
-        :class_name     => name, 
+        :class_name     => configuration[:class_name],
         :foreign_key    => configuration[:foreign_key],
         :counter_cache  => configuration[:counter_cache],
         :touch          => configuration[:touch]
         
       has_many :children,
-        :class_name     => name, 
+        :class_name     => configuration[:class_name],
         :foreign_key    => configuration[:foreign_key],
         :order          => configuration[:order],
         :dependent      => configuration[:dependent]

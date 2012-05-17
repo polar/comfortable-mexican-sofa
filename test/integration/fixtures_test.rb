@@ -5,8 +5,9 @@ require File.expand_path('../test_helper', File.dirname(__FILE__))
 class FixturesTest < ActionDispatch::IntegrationTest
   
   def setup
+    super
     host! 'example.com'
-    Cms::Site.make!.update_attribute(:hostname, 'example.com')
+    cms_sites(:default).update_attribute(:hostname, 'example.com')
   end
   
   def test_fixtures_disabled
@@ -35,6 +36,7 @@ class FixturesTest < ActionDispatch::IntegrationTest
           assert_equal 'Home Fixture Page', Cms::Page.root.label
           assert_equal 'Default Fixture Layout', Cms::Layout.find_by_identifier('default').label
           assert_equal 'Default Fixture Snippet', Cms::Snippet.find_by_identifier('default').label
+          assert_equal 'Fixture Content for Default Snippet', Cms::Snippet.find_by_identifier('default').content
           
           assert_equal "<html>\n  <body>\n    Home Page Fixture Contént\nFixture Content for Default Snippet\n  </body>\n</html>", response.body
         end
@@ -51,7 +53,7 @@ class FixturesTest < ActionDispatch::IntegrationTest
     assert_difference 'Cms::Page.count', 2 do
       assert_difference 'Cms::Layout.count', 2 do
         assert_difference 'Cms::Snippet.count', 1 do
-           http_auth :get, "/cms-admin/sites/#{Cms::Site.make!.id}/pages"
+           http_auth :get, "/cms-admin/sites/#{cms_sites(:default).id}/pages"
            assert_response :success
            assert_equal 'CMS Fixtures are enabled. All changes done here will be discarded.', flash[:error]
         end

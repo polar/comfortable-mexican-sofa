@@ -18,7 +18,7 @@ ComfortableMexicanSofa.configure do |config|
   # entirely set this to '' or nil
   #   config.admin_route_prefix = 'cms-admin'
   
-  # When arriving at /cms-admin you may chose to redirect to arbirtary path,
+  # When arriving at /cms-admin you may chose to redirect to arbitrary path,
   # for example '/cms-admin/users'
   #   config.admin_route_redirect = ''
   
@@ -97,8 +97,8 @@ ComfortableMexicanSofa.configure do |config|
   # Default is nil (not used)
   #   config.hostname_aliases = nil
 
-  # config.backend = :active_record
-  config.backend = :mongo_mapper
+   config.backend = :active_record
+  #config.backend = :mongo_mapper
 end
 
 # Default credentials for ComfortableMexicanSofa::HttpAuth

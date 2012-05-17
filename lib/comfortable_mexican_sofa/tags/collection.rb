@@ -12,7 +12,7 @@ class ComfortableMexicanSofa::Tag::Collection
     /\{\{\s*cms:collection:(#{identifier}):(.*?)\s*\}\}/
   end
   
-  # Class definitition. It's basically `Herp::DerpityDerp.undescore` so an example
+  # Class definition. It's basically `Herp::DerpityDerp.undescore` so an example
   # of valid definition is: `herp/derpity_derp`
   def collection_class
     self.params[0].classify

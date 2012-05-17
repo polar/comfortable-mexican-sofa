@@ -6,7 +6,7 @@ class MirrorsTest < ActiveSupport::TestCase
     setup_sites
     assert_difference 'Cms::Layout.count', 2 do
       layout = @site_a.layouts.create!(:identifier => 'test')
-      assert_equal 1, layout.mirrors.size
+      assert_equal 1, layout.mirrors.count
       assert_equal 'test', layout.mirrors.first.identifier
     end
   end
@@ -20,7 +20,7 @@ class MirrorsTest < ActiveSupport::TestCase
         :layout => layout,
         :label  => 'Root'
       )
-      assert_equal 1, page.mirrors.size
+      assert_equal 1, page.mirrors.count
       assert_equal '/', page.mirrors.first.full_path
     end
   end
@@ -29,7 +29,7 @@ class MirrorsTest < ActiveSupport::TestCase
     setup_sites
     assert_difference 'Cms::Snippet.count', 2 do
       snippet = @site_a.snippets.create(:identifier => 'test')
-      assert_equal 1, snippet.mirrors.size
+      assert_equal 1, snippet.mirrors.count
       assert_equal 'test', snippet.mirrors.first.identifier
     end
   end
@@ -151,7 +151,8 @@ class MirrorsTest < ActiveSupport::TestCase
   
   def test_site_creation_as_mirror
     site = cms_sites(:default)
-    Cms::Site.update_all(:is_mirrored => true) # bypassing callbacks
+    # TODO: Why does bypassing callbacks?
+    Cms::Site.all.each {|s| s.update_attributes!(:is_mirrored => true)} # bypassing callbacks
     
     assert_difference 'Cms::Site.count' do
       assert_difference 'Cms::Layout.count', site.layouts.count do
@@ -170,7 +171,8 @@ class MirrorsTest < ActiveSupport::TestCase
   
   def test_site_update_to_mirror
     site = cms_sites(:default)
-    Cms::Site.update_all(:is_mirrored => true) # bypassing callbacks
+    # TODO: Why does bypassing callbacks?
+    Cms::Site.all.each {|s| s.update_attributes!(:is_mirrored => true)} # bypassing callbacks
     
     mirror = Cms::Site.create!(
       :identifier => 'mirror',
@@ -217,7 +219,7 @@ class MirrorsTest < ActiveSupport::TestCase
   
   def test_site_destruction
     site = cms_sites(:default)
-    Cms::Site.update_all(:is_mirrored => true) # bypassing callbacks
+    Cms::Site.all.each {|s| s.update_attributes!(:is_mirrored => true)} # bypassing callbacks
     
     mirror = Cms::Site.create!(
       :identifier   => 'mirror',

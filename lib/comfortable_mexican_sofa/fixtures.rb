@@ -21,7 +21,7 @@ module ComfortableMexicanSofa::Fixtures
     
     Dir.glob("#{path}/*").select{|f| File.directory?(f)}.each do |path|
       identifier = path.split('/').last
-      layout = site.layouts.find_by_identifier(identifier) || site.layouts.new(:identifier => identifier)
+      layout = site.layouts.find_by_identifier(identifier) || site.layouts.build(:identifier => identifier)
       
       # updating attributes
       if File.exists?(file_path = File.join(path, "_#{identifier}.yml"))
@@ -64,36 +64,38 @@ module ComfortableMexicanSofa::Fixtures
         end
       end
       layout_ids << layout.id
-      
+
       # checking for nested fixtures
       layout_ids += import_layouts(to_hostname, from_hostname, path, false, layout, layout_ids)
     end
-    
+
     # removing all db entries that are not in fixtures
     if root
-      site.layouts.where('id NOT IN (?)', layout_ids.uniq).each{ |l| l.destroy } 
+      site.layouts.excluded(layout_ids.uniq).each{ |l| l.destroy }
       ComfortableMexicanSofa.logger.warn('Imported Layouts!')
     end
-    
+
+
     # returning ids of layouts in fixtures
     layout_ids.uniq
   end
-  
+
   def self.import_pages(to_hostname, from_hostname = nil, path = nil, root = true, parent = nil, page_ids = [])
     site = Cms::Site.find_or_create_by_hostname(to_hostname)
     unless path ||= find_fixtures_path((from_hostname || to_hostname), 'pages')
       ComfortableMexicanSofa.logger.warn('Cannot find Page fixtures')
       return []
     end
-    
+
     Dir.glob("#{path}/*").select{|f| File.directory?(f)}.each do |path|
       slug = path.split('/').last
       page = if parent
-        parent.children.find_by_slug(slug) || parent.children.new(:slug => slug, :site => site)
+        # Since children is gotten from a plugin here, and it needs STI we need to set its type.
+        parent.children.find_by_slug(slug) || parent.children.build(:slug => slug, :site => site, :type => "Cms::Page")
       else
-        site.pages.root || site.pages.new(:slug => slug)
+        site.pages.root || site.pages.build(:slug => slug)
       end
-      
+
       # updating attributes
       if File.exists?(file_path = File.join(path, "_#{slug}.yml"))
         if page.new_record? || File.mtime(file_path) > page.updated_at
@@ -108,7 +110,7 @@ module ComfortableMexicanSofa::Fixtures
         page.label = slug.titleize
         page.layout = parent.try(:layout)
       end
-      
+
       # updating content
       blocks_to_clear = page.blocks.collect(&:identifier)
       blocks_attributes = [ ]
@@ -122,7 +124,7 @@ module ComfortableMexicanSofa::Fixtures
           }
         end
       end
-      
+
       # clearing removed blocks
       blocks_to_clear.each do |identifier|
         blocks_attributes << {
@@ -130,7 +132,7 @@ module ComfortableMexicanSofa::Fixtures
           :content    => nil
         }
       end
-      
+
       # saving
       page.blocks_attributes = blocks_attributes if blocks_attributes.present?
       if page.changed? || blocks_attributes.present?
@@ -142,33 +144,33 @@ module ComfortableMexicanSofa::Fixtures
         end
       end
       page_ids << page.id
-      
+
       # checking for nested fixtures
       page_ids += import_pages(to_hostname, from_hostname, path, false, page, page_ids)
     end
-    
+
     # removing all db entries that are not in fixtures
     if root
-      site.pages.where('id NOT IN (?)', page_ids.uniq).each{ |p| p.destroy }
+      site.pages.excluded(page_ids.uniq).each{ |p| p.destroy }
       ComfortableMexicanSofa.logger.warn('Imported Pages!')
     end
-    
+
     # returning ids of layouts in fixtures
     page_ids.uniq
   end
-  
+
   def self.import_snippets(to_hostname, from_hostname = nil)
     site = Cms::Site.find_or_create_by_hostname(to_hostname)
     unless path = find_fixtures_path((from_hostname || to_hostname), 'snippets')
       ComfortableMexicanSofa.logger.warn('Cannot find Snippet fixtures')
       return []
     end
-    
+
     snippet_ids = []
     Dir.glob("#{path}/*").select{|f| File.directory?(f)}.each do |path|
       identifier = path.split('/').last
-      snippet = site.snippets.find_by_identifier(identifier) || site.snippets.new(:identifier => identifier)
-      
+      snippet = site.snippets.find_by_identifier(identifier) || site.snippets.build(:identifier => identifier)
+
       # updating attributes
       if File.exists?(file_path = File.join(path, "_#{identifier}.yml"))
         if snippet.new_record? || File.mtime(file_path) > snippet.updated_at
@@ -178,14 +180,14 @@ module ComfortableMexicanSofa::Fixtures
       elsif snippet.new_record?
         snippet.label = identifier.titleize
       end
-      
+
       # updating content
       if File.exists?(file_path = File.join(path, 'content.html'))
         if snippet.new_record? || File.mtime(file_path) > snippet.updated_at
           snippet.content = File.open(file_path).read
         end
       end
-      
+
       # saving
       if snippet.changed?
         if snippet.save
@@ -197,9 +199,9 @@ module ComfortableMexicanSofa::Fixtures
       end
       snippet_ids << snippet.id
     end
-    
+
     # removing all db entries that are not in fixtures
-    site.snippets.where('id NOT IN (?)', snippet_ids).each{ |s| s.destroy }
+    site.snippets.excluded(snippet_ids).each{ |s| s.destroy }
     ComfortableMexicanSofa.logger.warn('Imported Snippets!')
   end
   

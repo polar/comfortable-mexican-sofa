@@ -9,5 +9,5 @@ end
 
 Cms::Block.blueprint(:default_page_text) do
   identifier { "default_page_text" }
-  content { "\ndefault_page_text_content_a\n{{cms:snippet:default}}\ndefault_page_text_content_b" }
+  content { "default_page_text_content_a\n{{cms:snippet:default}}\ndefault_page_text_content_b" }
 end

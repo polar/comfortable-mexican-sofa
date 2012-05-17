@@ -20,7 +20,7 @@ module ComfortableMexicanSofa::ActiveRecord::IsCategorized
       
       after_save :sync_categories
       
-      scope :for_category, lambda { |*categories|
+      scope :categorized, lambda { |*categories|
         if (categories = [categories].flatten.compact).present?
           select("DISTINCT #{table_name}.*").
             joins(:categorizations => :category).
@@ -32,6 +32,7 @@ module ComfortableMexicanSofa::ActiveRecord::IsCategorized
   
   module InstanceMethods
     def sync_categories
+      self.categories(true)
       (self.category_ids || {}).each do |category_id, flag|
         case flag.to_i
         when 1

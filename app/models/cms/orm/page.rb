@@ -5,12 +5,19 @@ module Cms
 
       end
       def save(*args)
-        puts "Page.save #{self.inspect}"
         ret = super
+        puts "Page.save #{self.inspect}"
 
         puts "Page.blocks #{self.blocks.count} #{self.blocks.size}"
         return ret
       end
+
+      def destroy(*args)
+        puts "Page.destroy before #{id}"
+        ret = super
+        puts "Page.destroy after #{id}"
+      end
+
     end
   end
 end

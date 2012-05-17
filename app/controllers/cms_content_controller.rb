@@ -60,9 +60,11 @@ protected
   
   def load_cms_page
     @cms_page = @cms_site.pages.published.find_by_full_path!("/#{params[:cms_path]}")
+    raise ComfortableMexicanSofa.ModelNotFound if @cms_page.nil?
+
     return redirect_to(@cms_page.target_page.full_path) if @cms_page.target_page
-    
-  rescue ActiveRecord::RecordNotFound
+
+  rescue ComfortableMexicanSofa.ModelNotFound
     if @cms_page = @cms_site.pages.published.find_by_full_path('/404')
       render_html(404)
     else
@@ -72,7 +74,8 @@ protected
 
   def load_cms_layout
     @cms_layout = @cms_site.layouts.find_by_identifier!(params[:identifier])
-  rescue ActiveRecord::RecordNotFound
+    raise  ComfortableMexicanSofa.ModelNotFound if @cms_layout.nil?
+  rescue ComfortableMexicanSofa.ModelNotFound
     render :nothing => true, :status => 404
   end
 

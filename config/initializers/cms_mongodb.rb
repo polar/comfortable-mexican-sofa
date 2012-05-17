@@ -20,12 +20,10 @@ begin
     hostname = config['hostname'] || "localhost"
     port     = config['port'] ? config['port'].to_i : 27017
 
-    puts "Database: #{hostname}:#{port}:#{config['database']}"
     MongoMapper.connection = Mongo::Connection.new(hostname, port)
     MongoMapper.database   = config['database']
 
-    puts "Setting Identity Map"
-    MongoMapper.Document.plugin(MongoMapper::Plugins::IdentityMap)
+    MongoMapper::Document.plugin(MongoMapper::Plugins::IdentityMap)
     if config['authenticate'] == true
       MongoMapper.database.authenticate(config['username'], config['password'])
     end

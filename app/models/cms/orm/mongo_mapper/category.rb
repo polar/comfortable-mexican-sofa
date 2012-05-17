@@ -2,11 +2,6 @@ class Cms::Orm::MongoMapper::Category
   include MongoMapper::Document
   plugin MongoMapper::Plugins::IdentityMap
 
-  include ComfortableMexicanSofa::MongoMapper::HasRevisions
-  include ComfortableMexicanSofa::MongoMapper::IsCategorized
-  include ComfortableMexicanSofa::MongoMapper::IsMirrored
-
-
 #  self.table_name = 'cms_categories'
 #  create_table "cms_categories", :force => true do |t|
 #    t.integer "site_id",          :null => false
@@ -31,4 +26,14 @@ class Cms::Orm::MongoMapper::Category
   scope :of_type, lambda { |type|
     where(:categorized_type => type)
   }
+
+  # -- Validations ----------------------------------------------------------
+  validates :site_id,
+            :presence   => true
+  validates :label,
+            :presence   => true,
+            :uniqueness => { :scope => [:categorized_type, :site_id] }
+  validates :categorized_type,
+            :presence   => true
+
 end

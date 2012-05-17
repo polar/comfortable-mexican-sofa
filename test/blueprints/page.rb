@@ -2,7 +2,7 @@ Cms::Page.blueprint do
 end
 
 Cms::Page.blueprint(:default)  do
-  identifier { "default page" }
+#  identifier { "default page" }
   label { "Default Page" }
   slug { "default-page" }
   full_path { '/' }
@@ -19,13 +19,12 @@ layout_content_c"
 end
 
 Cms::Page.blueprint(:child)  do
-  identifier { "child page" }
+#  identifier { "child page" }
   label { "Child Page" }
-  slug { "child-page"}
+  slug { "child-page" }
   full_path { '/child-page' }
   is_published { true }
   content { "
-
 layout_content_a
 
 layout_content_b

@@ -9,8 +9,10 @@ class CmsAdmin::PagesController < CmsAdmin::BaseController
   def index
     return redirect_to :action => :new if @site.pages.count == 0
     if params[:category].present?
+      # TODO: Fix for active record
       #@pages = @site.pages.includes(:categories).for_category(params[:category]).all(:order => 'label')
-      @pages = @site.pages.where(:categories => params[:category]).order(:label).all
+      #@pages = @site.pages.where(:categories => params[:category]).order(:label).all
+      @pages = @site.pages.categorized(params[:category]).order(:label).all
     else
       @pages = [@site.pages.roots.first].compact
     end
@@ -28,7 +30,7 @@ class CmsAdmin::PagesController < CmsAdmin::BaseController
     @page.save!
     flash[:notice] = I18n.t('cms.pages.created')
     redirect_to :action => :edit, :id => @page
-  rescue ActiveRecord::RecordInvalid
+  rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.pages.creation_failure')
     render :action => :new
@@ -38,7 +40,7 @@ class CmsAdmin::PagesController < CmsAdmin::BaseController
     @page.save!
     flash[:notice] = I18n.t('cms.pages.updated')
     redirect_to :action => :edit, :id => @page
-  rescue ActiveRecord::RecordInvalid
+  rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.pages.update_failure')
     render :action => :edit
@@ -57,16 +59,19 @@ class CmsAdmin::PagesController < CmsAdmin::BaseController
 
   def toggle_branch
     @page = @site.pages.find(params[:id])
+    raise ComfortableMexicanSofa.ModelNotFound if @page.nil?
     s   = (session[:cms_page_tree] ||= [])
     id  = @page.id.to_s
     s.member?(id) ? s.delete(id) : s << id
-  rescue ActiveRecord::RecordNotFound
+  rescue ComfortableMexicanSofa.ModelNotFound
     # do nothing
   end
 
   def reorder
     (params[:cms_page] || []).each_with_index do |id, index|
-      Cms::Page.where(:id => id).update_all(:position => index)
+      Cms::Page.where(:id => id).all.each do |page|
+        page.update_attributes!(:position => index)
+      end
     end
     render :nothing => true
   end
@@ -92,9 +97,10 @@ protected
 
   def load_cms_page
     @page = @site.pages.find(params[:id])
+    raise ComfortableMexicanSofa.ModelNotFound if @page.nil?
     @page.attributes = params[:page]
     @page.layout ||= (@page.parent && @page.parent.layout || @site.layouts.roots.first)
-  rescue ActiveRecord::RecordNotFound
+  rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.pages.not_found')
     redirect_to :action => :index
   end

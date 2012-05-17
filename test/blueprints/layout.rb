@@ -23,7 +23,7 @@ Cms::Layout.blueprint(:nested) do
     "{{cms:page:header}}\n{{cms:page:content}}"
   }
   css { "nested_css" }
-  js "{nested_js}"
+  js { "nested_js" }
   position { 0 }
 end
 
@@ -34,5 +34,5 @@ Cms::Layout.blueprint(:child) do
     "{{cms:page:left_column}}\n{{cms:page:right_column}}"
   }
   css { "child_css" }
-  js "{child_js}"
+  js { "child_js" }
 end

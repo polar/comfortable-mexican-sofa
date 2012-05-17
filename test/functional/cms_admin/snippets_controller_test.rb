@@ -3,7 +3,7 @@ require File.expand_path('../../test_helper', File.dirname(__FILE__))
 class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
 
   def test_get_index
-    get :index, :site_id => Cms::Site.make!
+    get :index, :site_id => cms_sites(:default)
     assert_response :success
     assert assigns(:snippets)
     assert_template :index
@@ -11,16 +11,16 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
 
   def test_get_index_with_no_snippets
     Cms::Snippet.delete_all
-    get :index, :site_id => Cms::Site.make!
+    get :index, :site_id => cms_sites(:default)
     assert_response :redirect
     assert_redirected_to :action => :new
   end
   
   def test_get_index_with_category
-    category = Cms::Site.make!.categories.create!(:label => 'Test Category', :categorized_type => 'Cms::Snippet')
-    category.categorizations.create!(:categorized => Cms::Snippet.make!)
+    category = cms_sites(:default).categories.create!(:label => 'Test Category', :categorized_type => 'Cms::Snippet')
+    category.categorizations.create!(:categorized => cms_snippets(:default))
     
-    get :index, :site_id => Cms::Site.make!, :category => category.label
+    get :index, :site_id => cms_sites(:default), :category => category.label
     assert_response :success
     assert assigns(:snippets)
     assert_equal 1, assigns(:snippets).count
@@ -28,14 +28,14 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
   end
   
   def test_get_index_with_category_invalid
-    get :index, :site_id => Cms::Site.make!, :category => 'invalid'
+    get :index, :site_id => cms_sites(:default), :category => 'invalid'
     assert_response :success
     assert assigns(:snippets)
     assert_equal 0, assigns(:snippets).count
   end
 
   def test_get_new
-    site = Cms::Site.make!
+    site = cms_sites(:default)
     get :new, :site_id => site
     assert_response :success
     assert assigns(:snippet)
@@ -45,7 +45,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
   end
 
   def test_get_edit
-    snippet = Cms::Snippet.make!
+    snippet = cms_snippets(:default)
     get :edit, :site_id => snippet.site, :id => snippet
     assert_response :success
     assert assigns(:snippet)
@@ -54,7 +54,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
   end
 
   def test_get_edit_failure
-    get :edit, :site_id => Cms::Site.make!, :id => 'not_found'
+    get :edit, :site_id => cms_sites(:default), :id => 'not_found'
     assert_response :redirect
     assert_redirected_to :action => :index
     assert_equal 'Snippet not found', flash[:error]
@@ -62,14 +62,14 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
   
   def test_create
     assert_difference 'Cms::Snippet.count' do
-      post :create, :site_id => Cms::Site.make!, :snippet => {
+      post :create, :site_id => cms_sites(:default), :snippet => {
         :label      => 'Test Snippet',
         :identifier => 'test-snippet',
         :content    => 'Test Content'
       }
       assert_response :redirect
-      snippet = Cms::Snippet.last
-      assert_equal Cms::Site.make!, snippet.site
+      snippet = Cms::Snippet.order(:created_at).last
+      assert_equal cms_sites(:default), snippet.site
       assert_redirected_to :action => :edit, :id => snippet
       assert_equal 'Snippet created', flash[:notice]
     end
@@ -77,7 +77,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
 
   def test_creation_failure
     assert_no_difference 'Cms::Snippet.count' do
-      post :create, :site_id => Cms::Site.make!, :snippet => { }
+      post :create, :site_id => cms_sites(:default), :snippet => { }
       assert_response :success
       assert_template :new
       assert_equal 'Failed to create snippet', flash[:error]
@@ -85,7 +85,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
   end
 
   def test_update
-    snippet = Cms::Snippet.make!
+    snippet = cms_snippets(:default)
     put :update, :site_id => snippet.site, :id => snippet, :snippet => {
       :label    => 'New-Snippet',
       :content  => 'New Content'
@@ -99,7 +99,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
   end
 
   def test_update_failure
-    snippet = Cms::Snippet.make!
+    snippet = cms_snippets(:default)
     put :update, :site_id => snippet.site, :id => snippet, :snippet => {
       :identifier => ''
     }
@@ -112,7 +112,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
 
   def test_destroy
     assert_difference 'Cms::Snippet.count', -1 do
-      delete :destroy, :site_id => Cms::Site.make!, :id => Cms::Snippet.make!
+      delete :destroy, :site_id => cms_sites(:default), :id => cms_snippets(:default)
       assert_response :redirect
       assert_redirected_to :action => :index
       assert_equal 'Snippet deleted', flash[:notice]
@@ -120,15 +120,15 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
   end
   
   def test_reorder
-    snippet_one = Cms::Snippet.make!
-    snippet_two = Cms::Site.make!.snippets.create!(
+    snippet_one = cms_snippets(:default)
+    snippet_two = cms_sites(:default).snippets.create!(
       :label      => 'test',
       :identifier => 'test'
     )
     assert_equal 0, snippet_one.position
     assert_equal 1, snippet_two.position
 
-    post :reorder, :site_id => Cms::Site.make!, :cms_snippet => [snippet_two.id, snippet_one.id]
+    post :reorder, :site_id => cms_sites(:default), :cms_snippet => [snippet_two.id, snippet_one.id]
     assert_response :success
     snippet_one.reload
     snippet_two.reload

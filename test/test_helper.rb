@@ -1,8 +1,5 @@
 # encoding: utf-8
 
-require "mongo_mapper"
-require "machinist/mongo_mapper"
-
 require "database_cleaner"
 
 ENV['RAILS_ENV'] = 'test'
@@ -118,12 +115,18 @@ end
 class ActionController::TestCase
   def setup
     @request.env['HTTP_AUTHORIZATION'] = "Basic #{Base64.encode64('username:password')}"
+    DatabaseCleaner.clean
+    setup_blueprints
+    reset_config
+    puts "****************************END OF SETUP *******************************************"
   end
 end
 
 class ActionDispatch::IntegrationTest
   
   def setup
+    DatabaseCleaner.clean
+    setup_blueprints
     host! 'test.host'
     reset_config
   end

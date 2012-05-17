@@ -46,10 +46,10 @@ class CmsLayoutTest < ActiveSupport::TestCase
   end
   
   def test_options_for_select
-    assert_equal ['Default Layout', 'Nested Layout', '. . Child Layout'],
-      Cms::Layout.options_for_select(cms_sites(:default)).collect{|t| t.first}
-    assert_equal ['Default Layout', 'Nested Layout'],
-      Cms::Layout.options_for_select(cms_sites(:default), cms_layouts(:child)).collect{|t| t.first}
+    assert_equal Set.new(['Default Layout', 'Nested Layout', '. . Child Layout']),
+      Set.new(Cms::Layout.options_for_select(cms_sites(:default)).collect{|t| t.first})
+    assert_equal Set.new(['Default Layout', 'Nested Layout']),
+      Set.new(Cms::Layout.options_for_select(cms_sites(:default), cms_layouts(:child)).collect{|t| t.first})
     assert_equal ['Default Layout'],
       Cms::Layout.options_for_select(cms_sites(:default), cms_layouts(:nested)).collect{|t| t.first}
   end
@@ -90,8 +90,8 @@ class CmsLayoutTest < ActiveSupport::TestCase
     page_1 = cms_sites(:default).pages.create!(
       :label        => 'page_1',
       :slug         => 'page-1',
-      :parent_id    => cms_pages(:default).id,
-      :layout_id    => layout_1.id,
+      :parent       => cms_pages(:default),
+      :layout       => layout_1,
       :is_published => '1',
       :blocks_attributes => [
         { :identifier => 'header',
@@ -103,8 +103,8 @@ class CmsLayoutTest < ActiveSupport::TestCase
     page_2 = cms_sites(:default).pages.create!(
       :label          => 'page_2',
       :slug           => 'page-2',
-      :parent_id      => cms_pages(:default).id,
-      :layout_id      => layout_2.id,
+      :parent         => cms_pages(:default),
+      :layout         => layout_2,
       :is_published   => '1',
       :blocks_attributes => [
         { :identifier => 'header',
@@ -115,6 +115,9 @@ class CmsLayoutTest < ActiveSupport::TestCase
           :content    => 'left_column_content' }
       ]
     )
+    layout_1.reload
+    layout_2.reload
+
     assert_equal "header_content\ncontent_content", page_1.content
     assert_equal "header_content\nleft_column_content\nleft_column_content", page_2.content
     

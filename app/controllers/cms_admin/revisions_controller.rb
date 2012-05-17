@@ -34,14 +34,16 @@ protected
     elsif params[:snippet_id]
       Cms::Snippet.find(params[:snippet_id])
     end
-  rescue ActiveRecord::RecordNotFound
+    raise  ComfortableMexicanSofa.ModelNotFound if @record.nil?
+  rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.revisions.record_not_found')
     redirect_to cms_admin_path
   end
   
   def load_revision
     @revision = @record.revisions.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
+    raise  ComfortableMexicanSofa.ModelNotFound if @revision.nil?
+  rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.revisions.not_found')
     redirect_to_record
   end

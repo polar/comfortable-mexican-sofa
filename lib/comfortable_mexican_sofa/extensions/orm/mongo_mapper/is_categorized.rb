@@ -25,6 +25,7 @@ module ComfortableMexicanSofa::MongoMapper::IsCategorized
           files = catz.select {|c| c.categorized_type == self.name }.map {|c|c.categorized}
           where(:id.in => files.map {|c|c.id})
         else
+          #TODO: fix this, cannot be empty
           where()
         end
       }

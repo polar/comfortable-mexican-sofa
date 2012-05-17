@@ -66,13 +66,13 @@ class RevisionsTest < ActiveSupport::TestCase
       page.reload
       assert_equal 2, page.revisions.count
       revision = page.revisions.first
-      assert_equal ({
-        'blocks_attributes' => [
+      #MongoMapper stringifies the keys during serialization, whereas AR symbolizes them.
+      assert_equal Set.new([
           { :identifier => 'default_field_text',
             :content    => 'default_field_text_content' },
           { :identifier => 'default_page_text',
             :content    => "default_page_text_content_a\n{{cms:snippet:default}}\ndefault_page_text_content_b" }]
-      }), revision.data
+      ), Set.new(revision.data["blocks_attributes"].collect {|h| h.symbolize_keys})
     end
   end
   
@@ -136,10 +136,10 @@ class RevisionsTest < ActiveSupport::TestCase
     assert_difference 'page.revisions.count' do
       page.restore_from_revision(revision)
       page.reload
-      assert_equal [
+      assert_equal Set.new([
         { :identifier => 'default_field_text', :content => 'revision field content'  },
         { :identifier => 'default_page_text',  :content => 'revision page content'   }
-      ], page.blocks_attributes
+      ]), Set.new(page.blocks_attributes)
     end
   end
   

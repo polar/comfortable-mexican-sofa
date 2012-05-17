@@ -15,6 +15,7 @@ module ComfortableMexicanSofa::MongoMapper::HasRevisions
       many :revisions,
         :class_name => "Cms::Revision",
         :as         => :record,
+        :order      => :created_at.desc,
         :dependent  => :destroy
       
       before_save :prepare_revision

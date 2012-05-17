@@ -20,5 +20,5 @@ module ComfortableMexicanSofa
       super "Cannot find CMS Page at #{path}"
     end
   end
-  
+
 end

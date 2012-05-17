@@ -5,8 +5,9 @@ class CmsAdmin::SnippetsController < CmsAdmin::BaseController
 
   def index
     return redirect_to :action => :new if @site.snippets.count == 0
+    # TODO: Fix for ActiveRecord
     #@snippets = @site.snippets.includes(:categories).for_category(params[:category])
-    @snippets = @site.snippets.where(:category => params[:category]).all
+    @snippets = @site.snippets.categorized(params[:category]).all
   end
 
   def new
@@ -21,7 +22,7 @@ class CmsAdmin::SnippetsController < CmsAdmin::BaseController
     @snippet.save!
     flash[:notice] = I18n.t('cms.snippets.created')
     redirect_to :action => :edit, :id => @snippet
-  rescue ActiveRecord::RecordInvalid
+  rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.snippets.creation_failure')
     render :action => :new
@@ -31,7 +32,7 @@ class CmsAdmin::SnippetsController < CmsAdmin::BaseController
     @snippet.update_attributes!(params[:snippet])
     flash[:notice] = I18n.t('cms.snippets.updated')
     redirect_to :action => :edit, :id => @snippet
-  rescue ActiveRecord::RecordInvalid
+  rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.snippets.update_failure')
     render :action => :edit
@@ -60,7 +61,8 @@ protected
 
   def load_snippet
     @snippet = @site.snippets.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
+    raise ComfortableMexicanSofa.ModelNotFound if @snippet.nil?
+  rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.snippets.not_found')
     redirect_to :action => :index
   end

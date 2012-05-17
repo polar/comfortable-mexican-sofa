@@ -28,7 +28,7 @@ module ComfortableMexicanSofa::RenderMethods
     #   }
     #
     # This way you are populating page block content and rendering
-    # an instantialized CMS page.
+    # an instantiated CMS page.
     #
     # Site is loaded automatically based on the request. However you can force
     # it by passing :cms_site parameter with site's slug. For example:

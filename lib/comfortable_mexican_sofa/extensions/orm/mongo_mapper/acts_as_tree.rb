@@ -12,6 +12,7 @@ module ComfortableMexicanSofa::MongoMapper::ActsAsTree
     def cms_acts_as_tree(options = {})
       puts "MongoMapper::Acts as Tree! '#{name}'  '#{self.name}' #{self.superclass.superclass.name}"
       configuration = {
+        :class_name     => name,
         :foreign_key    => 'parent_id', 
         :order          => nil, 
         :counter_cache  => nil,
@@ -23,11 +24,11 @@ module ComfortableMexicanSofa::MongoMapper::ActsAsTree
       key configuration[:foreign_key].to_s.pluralize.to_sym, Array unless keys.key?(configuration[:foreign_key].to_s.pluralize.to_sym)
 
       belongs_to :parent,
-                 :class_name => name,
+                 :class_name => configuration[:class_name],
                  :foreign_key => configuration[:foreign_key]
 
       many :children,
-           :class_name     => name,
+           :class_name     => configuration[:class_name],
            :foreign_key    => configuration[:foreign_key],
            :order          => configuration[:order],
            :dependent      => configuration[:dependent] do
@@ -35,6 +36,8 @@ module ComfortableMexicanSofa::MongoMapper::ActsAsTree
           where(configuration[:foreign_key] => nil)
         end
       end
+
+      attr_accessible :parent, :parent_id
 
       before_save :set_parents
 

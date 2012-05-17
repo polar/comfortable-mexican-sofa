@@ -1,10 +1,5 @@
 class Cms::Orm::ActiveRecord::Category < ActiveRecord::Base
 
-  include ComfortableMexicanSofa::ActiveRecord::ActsAsTree
-  include ComfortableMexicanSofa::ActiveRecord::HasRevisions
-  include ComfortableMexicanSofa::ActiveRecord::IsCategorized
-  include ComfortableMexicanSofa::ActiveRecord::IsMirrored
-
   ComfortableMexicanSofa.establish_connection(self)
   
   self.table_name = 'cms_categories'
@@ -19,5 +14,15 @@ class Cms::Orm::ActiveRecord::Category < ActiveRecord::Base
   scope :of_type, lambda { |type|
     where(:categorized_type => type)
   }
-  
+
+  # -- Validations ----------------------------------------------------------
+  validates :site_id,
+            :presence   => true
+  validates :label,
+            :presence   => true,
+            :uniqueness => { :scope => [:categorized_type, :site_id] }
+  validates :categorized_type,
+            :presence   => true
+
+
 end

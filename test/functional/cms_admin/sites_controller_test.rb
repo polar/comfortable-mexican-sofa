@@ -26,7 +26,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   end
 
   def test_get_edit
-    site = Cms::Site.make!
+    site = cms_sites(:default)
     get :edit, :id => site
     assert_response :success
     assert assigns(:site)
@@ -49,7 +49,9 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
         :hostname   => 'test.site.local'
       }
       assert_response :redirect
-      site = Cms::Site.last
+      # This situation is not always true with different ORMs
+      #site = Cms::Site.last
+      site = Cms::Site.order(:created_at).all.last
       assert_redirected_to cms_admin_site_layouts_path(site)
       assert_equal 'Site created', flash[:notice]
     end
@@ -57,6 +59,8 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
 
   def test_creation_failure
     assert_no_difference 'Cms::Site.count' do
+      # This should fail because it gets the hostname of "test.host" and that should already have a path
+      # of "/" and the test fixtures already have a site called "test.host".
       post :create, :site => { }
       assert_response :success
       assert_template :new
@@ -65,7 +69,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   end
 
   def test_update
-    site = Cms::Site.make!
+    site = cms_sites(:default)
     put :update, :id => site, :site => {
       :label    => 'New Site',
       :hostname => 'new.site.local'
@@ -79,7 +83,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   end
 
   def test_update_failure
-    site = Cms::Site.make!
+    site = cms_sites(:default)
     put :update, :id => site, :site => {
       :hostname => ''
     }
@@ -92,7 +96,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
 
   def test_destroy
     assert_difference 'Cms::Site.count', -1 do
-      delete :destroy, :id => Cms::Site.make!
+      delete :destroy, :id => cms_sites(:default)
       assert_response :redirect
       assert_redirected_to :action => :index
       assert_equal 'Site deleted', flash[:notice]

@@ -214,14 +214,14 @@ class CmsPageTest < ActiveSupport::TestCase
   def test_unicode_slug_escaping
     page = cms_pages(:child)
     page_1 = cms_sites(:default).pages.create!(new_params(:parent => page, :slug => 'tést-ünicode-slug'))
-    assert_equal CGI::escape('tést-ünicode-slug'), page_1.escaped_slug
-    assert_equal CGI::escape('/child-page/tést-ünicode-slug').gsub('%2F', '/'), page_1.escaped_full_path
+    assert_equal 'tést-ünicode-slug', page_1.slug
+    assert_equal '/child-page/tést-ünicode-slug', page_1.full_path
   end
 
   def test_unicode_slug_unescaping
     page = cms_pages(:child)
     page_1 = cms_sites(:default).pages.create!(new_params(:parent => page, :slug => 'tést-ünicode-slug'))
-    found_page = cms_sites(:default).pages.where(:escaped_slug => CGI::escape('tést-ünicode-slug')).first
+    found_page = cms_sites(:default).pages.where(:slug => 'tést-ünicode-slug').first
     assert_equal 'tést-ünicode-slug', found_page.slug
     assert_equal '/child-page/tést-ünicode-slug', found_page.full_path
   end

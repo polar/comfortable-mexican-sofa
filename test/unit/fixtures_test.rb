@@ -29,9 +29,15 @@ class FixturesTest < ActiveSupport::TestCase
     layout        = cms_layouts(:default)
     nested_layout = cms_layouts(:nested)
     child_layout  = cms_layouts(:child)
-    layout.update_attribute(:updated_at, 10.years.ago)
-    nested_layout.update_attribute(:updated_at, 10.years.ago)
-    child_layout.update_attribute(:updated_at, 10.years.ago)
+
+    #layout.update_attribute(:updated_at, 10.years.ago)
+    #nested_layout.update_attribute(:updated_at, 10.years.ago)
+    #child_layout.update_attribute(:updated_at, 10.years.ago)
+
+    sleep(1)
+    layout_path         = File.join(ComfortableMexicanSofa.config.fixtures_path, "example.com", "layouts", "default")
+    FileUtils.touch(Dir.glob(File.join(layout_path,"**/*")))
+    # there is no "child" layout
     
     assert_difference 'Cms::Layout.count', -1 do
       ComfortableMexicanSofa::Fixtures.import_layouts('test.host', 'example.com')
@@ -107,7 +113,17 @@ class FixturesTest < ActiveSupport::TestCase
   
   def test_import_pages_updating_and_deleting
     page = cms_pages(:default)
-    page.update_attribute(:updated_at, 10.years.ago)
+    #page.update_attribute(:updated_at, 10.years.ago)
+    sleep(1)
+    page_path         = File.join(ComfortableMexicanSofa.config.fixtures_path, 'example.com', 'pages', 'index')
+    attr_file_path    = File.join(page_path, '_index.yml')
+    content_file_path = File.join(page_path, 'content.html')
+
+    FileUtils.touch(page_path)
+    FileUtils.touch(attr_file_path)
+    FileUtils.touch(content_file_path)
+    # We do not update "child"
+
     assert_equal 'Default Page', page.label
     
     child = cms_pages(:child)
@@ -156,7 +172,13 @@ class FixturesTest < ActiveSupport::TestCase
       :layout => cms_layouts(:default),
       :blocks_attributes => [ { :identifier => 'to_delete', :content => 'test content' } ]
     )
-    page.update_attribute(:updated_at, 10.years.ago)
+    #page.update_attribute(:updated_at, 10.years.ago)
+    sleep(1)
+    page_path      = File.join(ComfortableMexicanSofa.config.fixtures_path, 'example.com', 'pages', 'index')
+    attr_file_path    = File.join(page_path, '_index.yml')
+    content_file_path = File.join(page_path, 'content.html')
+    FileUtils.touch(attr_file_path)
+    FileUtils.touch(Dir.glob(File.join(page_path,"*.html")))
     
     ComfortableMexicanSofa::Fixtures.import_pages('test.host', 'example.com')
     page.reload
@@ -173,6 +195,7 @@ class FixturesTest < ActiveSupport::TestCase
     
     assert_difference 'Cms::Snippet.count' do
       ComfortableMexicanSofa::Fixtures.import_snippets('test.host', 'example.com')
+      # TODO: Find a better test on creation.
       assert snippet = Cms::Snippet.last
       assert_equal 'default', snippet.identifier
       assert_equal 'Default Fixture Snippet', snippet.label
@@ -182,7 +205,16 @@ class FixturesTest < ActiveSupport::TestCase
   
   def test_import_snippets_updating
     snippet = cms_snippets(:default)
-    snippet.update_attribute(:updated_at, 10.years.ago)
+    # This doesn't work in MongoMapper because you cannot change this and
+    # then update and have it not update update_at. Duh.
+    #snippet.update_attribute(:updated_at, 10.years.ago)
+    snippet_path      = File.join(ComfortableMexicanSofa.config.fixtures_path, 'example.com', 'snippets', 'default')
+    attr_file_path    = File.join(snippet_path, '_default.yml')
+    content_file_path = File.join(snippet_path, 'content.html')
+    sleep(1)
+    FileUtils.touch(attr_file_path)
+    FileUtils.touch(content_file_path)
+
     assert_equal 'default', snippet.identifier
     assert_equal 'Default Snippet', snippet.label
     assert_equal 'default_snippet_content', snippet.content
@@ -202,6 +234,7 @@ class FixturesTest < ActiveSupport::TestCase
     
     assert_no_difference 'Cms::Snippet.count' do
       ComfortableMexicanSofa::Fixtures.import_snippets('test.host', 'example.com')
+      # TODO: This may not be true given the ORM
       assert snippet = Cms::Snippet.last
       assert_equal 'default', snippet.identifier
       assert_equal 'Default Fixture Snippet', snippet.label
@@ -282,7 +315,7 @@ class FixturesTest < ActiveSupport::TestCase
       'label'       => 'Nested Layout',
       'app_layout'  => nil,
       'parent'      => nil,
-      'position'    => 0
+      'position'    => 1
     }), YAML.load_file(layout_1_attr_path)
     assert_equal cms_layouts(:nested).content, IO.read(layout_1_content_path)
     assert_equal cms_layouts(:nested).css, IO.read(layout_1_css_path)
@@ -303,10 +336,10 @@ class FixturesTest < ActiveSupport::TestCase
   
   def test_export_pages
     host_path = File.join(ComfortableMexicanSofa.config.fixtures_path, 'test.test')
-    page_1_attr_path    = File.join(host_path, 'pages/index/_index.yml')
-    page_1_block_a_path = File.join(host_path, 'pages/index/default_field_text.html')
-    page_1_block_b_path = File.join(host_path, 'pages/index/default_page_text.html')
-    page_2_attr_path    = File.join(host_path, 'pages/index/child-page/_child-page.yml')
+    page_1_attr_path    = File.join(host_path, 'pages/default-page/_default-page.yml')
+    page_1_block_a_path = File.join(host_path, 'pages/default-page/default_field_text.html')
+    page_1_block_b_path = File.join(host_path, 'pages/default-page/default_page_text.html')
+    page_2_attr_path    = File.join(host_path, 'pages/default-page/child-page/_child-page.yml')
     
     ComfortableMexicanSofa::Fixtures.export_pages('test.host', 'test.test')
     
@@ -324,7 +357,7 @@ class FixturesTest < ActiveSupport::TestCase
     assert_equal ({
       'label'         => 'Child Page',
       'layout'        => 'default',
-      'parent'        => 'index',
+      'parent'        => 'default-page',
       'target_page'   => nil,
       'is_published'  => true,
       'position'      => 0

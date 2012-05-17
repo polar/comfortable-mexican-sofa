@@ -3,32 +3,32 @@ require File.expand_path('../../test_helper', File.dirname(__FILE__))
 class CmsAdmin::RevisionsControllerTest < ActionController::TestCase
   
   def test_get_index_for_layouts
-    get :index, :site_id => Cms::Site.make!, :layout_id => Cms::Layout.make!
+    get :index, :site_id => cms_sites(:default), :layout_id => cms_layouts(:default)
     assert_response :redirect
     assert_redirected_to :action => :show, :id => cms_revisions(:layout)
   end
   
   def test_get_index_for_pages
-    get :index, :site_id => Cms::Site.make!, :page_id => Cms::Page.make!
+    get :index, :site_id => cms_sites(:default), :page_id => cms_pages(:default)
     assert_response :redirect
     assert_redirected_to :action => :show, :id => cms_revisions(:page)
   end
   
   def test_get_index_for_snippets
-    get :index, :site_id => Cms::Site.make!, :snippet_id => Cms::Snippet.make!
+    get :index, :site_id => cms_sites(:default), :snippet_id => cms_snippets(:default)
     assert_response :redirect
     assert_redirected_to :action => :show, :id => cms_revisions(:snippet)
   end
   
   def test_get_index_for_snippets_with_no_revisions
     Cms::Revision.delete_all
-    get :index, :site_id => Cms::Site.make!, :snippet_id => Cms::Snippet.make!
+    get :index, :site_id => cms_sites(:default), :snippet_id => cms_snippets(:default)
     assert_response :redirect
     assert_redirected_to :action => :show, :id => 0
   end
   
   def test_get_show_for_layout
-    get :show, :site_id => Cms::Site.make!, :layout_id => Cms::Layout.make!, :id => cms_revisions(:layout)
+    get :show, :site_id => cms_sites(:default), :layout_id => cms_layouts(:default), :id => cms_revisions(:layout)
     assert_response :success
     assert assigns(:record)
     assert assigns(:revision)
@@ -37,7 +37,7 @@ class CmsAdmin::RevisionsControllerTest < ActionController::TestCase
   end
   
   def test_get_show_for_page
-    get :show, :site_id => Cms::Site.make!, :page_id => Cms::Page.make!, :id => cms_revisions(:page)
+    get :show, :site_id => cms_sites(:default), :page_id => cms_pages(:default), :id => cms_revisions(:page)
     assert_response :success
     assert assigns(:record)
     assert assigns(:revision)
@@ -46,7 +46,7 @@ class CmsAdmin::RevisionsControllerTest < ActionController::TestCase
   end
   
   def test_get_show_for_snippet
-    get :show, :site_id => Cms::Site.make!, :snippet_id => Cms::Snippet.make!, :id => cms_revisions(:snippet)
+    get :show, :site_id => cms_sites(:default), :snippet_id => cms_snippets(:default), :id => cms_revisions(:snippet)
     assert_response :success
     assert assigns(:record)
     assert assigns(:revision)
@@ -55,15 +55,15 @@ class CmsAdmin::RevisionsControllerTest < ActionController::TestCase
   end
   
   def test_get_show_for_bad_type
-    get :show, :site_id => Cms::Site.make!, :snippet_id => 'invalid', :id => cms_revisions(:snippet)
+    get :show, :site_id => cms_sites(:default), :snippet_id => 'invalid', :id => cms_revisions(:snippet)
     assert_response :redirect
     assert_redirected_to cms_admin_path
     assert_equal 'Record Not Found', flash[:error]
   end
   
   def test_get_show_for_layout_failure
-    site = Cms::Site.make!
-    get :show, :site_id => site, :layout_id => Cms::Layout.make!, :id => 'invalid'
+    site = cms_sites(:default)
+    get :show, :site_id => site, :layout_id => cms_layouts(:default), :id => 'invalid'
     assert_response :redirect
     assert assigns(:record)
     assert_redirected_to edit_cms_admin_site_layout_path(site, assigns(:record))
@@ -71,8 +71,8 @@ class CmsAdmin::RevisionsControllerTest < ActionController::TestCase
   end
   
   def test_get_show_for_page_failure
-    site = Cms::Site.make!
-    get :show, :site_id => site, :page_id => Cms::Page.make!, :id => 'invalid'
+    site = cms_sites(:default)
+    get :show, :site_id => site, :page_id => cms_pages(:default), :id => 'invalid'
     assert_response :redirect
     assert assigns(:record)
     assert_redirected_to edit_cms_admin_site_page_path(site, assigns(:record))
@@ -80,8 +80,8 @@ class CmsAdmin::RevisionsControllerTest < ActionController::TestCase
   end
   
   def test_get_show_for_snippet_failure
-    site = Cms::Site.make!
-    get :show, :site_id => site, :snippet_id => Cms::Snippet.make!, :id => 'invalid'
+    site = cms_sites(:default)
+    get :show, :site_id => site, :snippet_id => cms_snippets(:default), :id => 'invalid'
     assert_response :redirect
     assert assigns(:record)
     assert_redirected_to edit_cms_admin_site_snippet_path(site, assigns(:record))
@@ -89,10 +89,10 @@ class CmsAdmin::RevisionsControllerTest < ActionController::TestCase
   end
   
   def test_revert_for_layout
-    layout = Cms::Layout.make!
+    layout = cms_layouts(:default)
     
     assert_difference 'layout.revisions.count' do 
-      put :revert, :site_id => Cms::Site.make!, :layout_id => layout, :id => cms_revisions(:layout)
+      put :revert, :site_id => cms_sites(:default), :layout_id => layout, :id => cms_revisions(:layout)
       assert_response :redirect
       assert_redirected_to edit_cms_admin_site_layout_path(layout.site, layout)
       assert_equal 'Content Reverted', flash[:notice]
@@ -105,27 +105,27 @@ class CmsAdmin::RevisionsControllerTest < ActionController::TestCase
   end
   
   def test_revert_for_page
-    page = Cms::Page.make!
+    page = cms_pages(:default)
     
     assert_difference 'page.revisions.count' do
-      put :revert, :site_id => Cms::Site.make!, :page_id => page, :id => cms_revisions(:page)
+      put :revert, :site_id => cms_sites(:default), :page_id => page, :id => cms_revisions(:page)
       assert_response :redirect
       assert_redirected_to edit_cms_admin_site_page_path(page.site, page)
       assert_equal 'Content Reverted', flash[:notice]
       
       page.reload
-      assert_equal [
+      assert_equal Set.new([
         { :identifier => 'default_field_text', :content => 'revision field content'  },
         { :identifier => 'default_page_text',  :content => 'revision page content'   }
-      ], page.blocks_attributes
+      ]), Set.new(page.blocks_attributes)
     end
   end
   
   def test_revert_for_snippet
-    snippet = Cms::Snippet.make!
+    snippet = cms_snippets(:default)
     
     assert_difference 'snippet.revisions.count' do
-      put :revert, :site_id => Cms::Site.make!, :snippet_id => snippet, :id => cms_revisions(:snippet)
+      put :revert, :site_id => cms_sites(:default), :snippet_id => snippet, :id => cms_revisions(:snippet)
       assert_response :redirect
       assert_redirected_to edit_cms_admin_site_snippet_path(snippet.site, snippet)
       assert_equal 'Content Reverted', flash[:notice]
