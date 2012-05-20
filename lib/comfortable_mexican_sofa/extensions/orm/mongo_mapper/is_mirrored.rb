@@ -23,7 +23,7 @@ module ComfortableMexicanSofa::MongoMapper::IsMirrored
       (Cms::Site.mirrored.all - [self.site]).collect do |site|
         case self
           when Cms::Layout  then site.layouts.find_by_identifier(self.identifier)
-          when Cms::Page    then site.pages.find_by_escaped_full_path(self.escaped_full_path)
+          when Cms::Page    then site.pages.find_by_full_path(self.full_path)
           when Cms::Snippet then site.snippets.find_by_identifier(self.identifier)
         end
       end.compact
@@ -45,11 +45,11 @@ module ComfortableMexicanSofa::MongoMapper::IsMirrored
           }
           m
         when Cms::Page
-          m = site.pages.find_by_escaped_full_path(self.escaped_full_path_was || self.escaped_full_path) || site.pages.build
+          m = site.pages.find_by_full_path(self.full_path_was || self.full_path) || site.pages.build
           m.attributes = {
             :slug       => self.slug,
             :label      => self.slug.blank?? self.label : m.label,
-            :parent_id  => site.pages.find_by_escaped_full_path(self.parent.try(:escaped_full_path)).try(:id),
+            :parent_id  => site.pages.find_by_full_path(self.parent.try(:full_path)).try(:id),
             :layout     => site.layouts.find_by_identifier(self.layout.identifier)
           }
           m

@@ -48,13 +48,13 @@ class CmsPageTest < ActiveSupport::TestCase
   def test_validation_of_slug
     page = cms_pages(:child)
     page.slug = 'slug.with.d0ts-and_things'
-    assert page.valid?
+    assert page.valid?, "should be valid"
     
     page.slug = 'inva lid'
-    assert page.invalid?
+    assert page.invalid?, "should be invalid"
 
     page.slug = 'acción'
-    assert page.valid?
+    assert page.valid? , "should be valid with encoding"
   end
   
   def test_label_assignment
@@ -224,6 +224,8 @@ class CmsPageTest < ActiveSupport::TestCase
     found_page = cms_sites(:default).pages.where(:slug => 'tést-ünicode-slug').first
     assert_equal 'tést-ünicode-slug', found_page.slug
     assert_equal '/child-page/tést-ünicode-slug', found_page.full_path
+    assert_equal 't%C3%A9st-%C3%BCnicode-slug', found_page.escaped_slug
+    assert_equal '/child-page/t%C3%A9st-%C3%BCnicode-slug', found_page.escaped_full_path
   end
   
 protected

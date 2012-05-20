@@ -18,7 +18,7 @@ class Cms::Orm::MongoMapper::Snippet
 
   scope :by_position, order(:position)
 
-  cms_is_categorized
+  cms_is_categorized :class_name => "Cms::Snippet"
   cms_has_revisions_for :content
 
   attr_accessible :label, :identifier, :content, :position, :is_shared

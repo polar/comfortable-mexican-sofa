@@ -20,7 +20,7 @@ class Cms::Orm::MongoMapper::File
   belongs_to :site, :class_name => "Cms::Site"
   belongs_to :block, :class_name => "Cms::Block"
 
-  cms_is_categorized
+  cms_is_categorized :class_name => "Cms::File"
 
   attr_accessible :label, :file, :file_file_name, :file_content_type, :file_file_size, :description, :position
   attr_accessible :site, :site_id, :block, :block_id

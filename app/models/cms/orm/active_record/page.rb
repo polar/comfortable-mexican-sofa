@@ -216,7 +216,7 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
   #end
 
   def escaped_full_path
-    "#{CGI::escape(self.full_path).gsub('%2F', '/')}".squeeze('/') if self.escaped_full_path
+    "#{CGI::escape(self.full_path).gsub('%2F', '/')}".squeeze('/') if self.full_path
   end
 
   #def escaped_slug_dirty

@@ -5,9 +5,14 @@ module ComfortableMexicanSofa::MongoMapper::IsCategorized
   end
   
   module ClassMethods
-    def cms_is_categorized
+    def cms_is_categorized(options = {})
       include ComfortableMexicanSofa::MongoMapper::IsCategorized::InstanceMethods
-      
+      configuration = {
+          :class_name     => name
+      }
+      configuration.update(options) if options.is_a?(Hash)
+
+
       many :categorizations,
         :as         => :categorized,
         :class_name => 'Cms::Categorization',
@@ -19,13 +24,11 @@ module ComfortableMexicanSofa::MongoMapper::IsCategorized
       
       scope :for_category, lambda { |*categories|
         if (categories = [categories].flatten.compact).present?
-          # TODO: Fix for MongoMapper
           cats = Cms::Category.where(:label.in => categories).all
           catz = Cms::Categorization.where(:category_id.in => cats.map {|c|c.id}).all
-          files = catz.select {|c| c.categorized_type == self.name }.map {|c|c.categorized}
+          files = catz.select {|c| c.categorized_type == configuration[:class_name] }.map {|c|c.categorized}
           where(:id.in => files.map {|c|c.id})
         else
-          #TODO: fix this, cannot be empty
           where()
         end
       }

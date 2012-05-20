@@ -2,14 +2,6 @@ class Cms::Orm::MongoMapper::Category
   include MongoMapper::Document
   plugin MongoMapper::Plugins::IdentityMap
 
-#  self.table_name = 'cms_categories'
-#  create_table "cms_categories", :force => true do |t|
-#    t.integer "site_id",          :null => false
-#    t.string  "label",            :null => false
-#    t.string  "categorized_type", :null => false
-#  end
-
-  #key :type, String, :null => false
   key :label, String, :null => true
   key :categorized_type, String, :null => true
 

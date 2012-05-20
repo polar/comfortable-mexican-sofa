@@ -97,8 +97,8 @@ ComfortableMexicanSofa.configure do |config|
   # Default is nil (not used)
   #   config.hostname_aliases = nil
 
-   config.backend = :active_record
-  #config.backend = :mongo_mapper
+  # config.backend = :active_record
+  config.backend = :mongo_mapper
 end
 
 # Default credentials for ComfortableMexicanSofa::HttpAuth

@@ -17,7 +17,7 @@ class Cms::Orm::MongoMapper::Layout
 
   timestamps!
 
-  cms_is_categorized
+  cms_is_categorized  :class_name => "Cms::Layout"
   cms_acts_as_tree :class_name => "Cms::Layout"
   cms_has_revisions_for :content, :css, :js
 

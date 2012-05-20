@@ -2,9 +2,6 @@ class Cms::Orm::MongoMapper::Site
   include MongoMapper::Document
   plugin MongoMapper::Plugins::IdentityMap
 
-  include ComfortableMexicanSofa::MongoMapper::HasRevisions
-  include ComfortableMexicanSofa::MongoMapper::IsCategorized
-
   key :label, String, :null => false
   key :identifier, String, :null => false
   key :hostname, String, :null => false
@@ -54,10 +51,6 @@ class Cms::Orm::MongoMapper::Site
       else
         where()
       end
-    end
-
-    def find_by_full_path(full_path)
-      where(:escaped_full_path => CGI.escape(full_path).gsub("%2F","/")).first
     end
 
     def published
@@ -139,7 +132,7 @@ class Cms::Orm::MongoMapper::Site
   validates :hostname,
             :presence   => true,
             :uniqueness => { :scope => :path },
-            :format     => { :with => /^[\w\.\-]+(:[0-9]+)$/ }
+            :format     => { :with => /^[\w\.\-]+(:[0-9]+)?$/ }
 
   # -- Class Methods --------------------------------------------------------
 

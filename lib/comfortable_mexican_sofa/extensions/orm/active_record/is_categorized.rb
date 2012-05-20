@@ -5,8 +5,12 @@ module ComfortableMexicanSofa::ActiveRecord::IsCategorized
   end
   
   module ClassMethods
-    def cms_is_categorized
+    def cms_is_categorized(options = {})
       include ComfortableMexicanSofa::ActiveRecord::IsCategorized::InstanceMethods
+      configuration = {
+          :class_name     => name
+      }
+      configuration.update(options) if options.is_a?(Hash)
       
       has_many :categorizations,
         :as         => :categorized,

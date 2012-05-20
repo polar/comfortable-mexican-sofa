@@ -7,9 +7,8 @@ class Cms::Orm::MongoMapper::Page
   include ComfortableMexicanSofa::MongoMapper::IsCategorized
 
   key :label, String, :null => false
-  key :escaped_slug, String
-  key :escaped_full_path, String, :null => false
-  #TODO: Change this in AR
+  key :slug, String
+  key :full_path, String, :null => false
   key :content_dirty, Boolean, :default => true
   key :content_cache, String
   key :position, Integer, :default => -1, :null => false
@@ -46,7 +45,7 @@ class Cms::Orm::MongoMapper::Page
                 :blocks_attributes_changed
 
   cms_acts_as_tree :class_name => "Cms::Page", :counter_cache => :children_count
-  cms_is_categorized
+  cms_is_categorized :class_name => "Cms::Page"
   cms_has_revisions_for :blocks_attributes
 
   # -- Callbacks ------------------------------------------------------------
@@ -63,11 +62,13 @@ class Cms::Orm::MongoMapper::Page
             :presence   => true
   validates :label,
             :presence   => true
+  # MongoMapper validations don't deal with UTF-8 strings.
   validates :slug,
             :presence   => true,
-            :format     => /^\p{Alnum}[\.\p{Alnum}_-]*$/i,
+  #          :format     => /^\p{Alnum}[\.\p{Alnum}_-]*$/i,
             :uniqueness => { :scope => :parent_id },
             :unless     => lambda{ |p| p.site && (p.site.pages.count == 0 || p.site.pages.roots.first == self) }
+  validate  :validate_slug_format
   validates :layout,
             :presence   => true
   validate :validate_target_page
@@ -84,7 +85,7 @@ class Cms::Orm::MongoMapper::Page
     return [] unless self.site.is_mirrored?
     sites = Cms::Site.mirrored.all - [self.site]
     sites.collect do |site|
-      site.pages.find_by_escaped_full_path(self.escaped_full_path)
+      site.pages.find_by_full_path(self.full_path)
     end.compact
   end
 
@@ -93,14 +94,14 @@ class Cms::Orm::MongoMapper::Page
 
     sites = Cms::Site.mirrored.all - [self.site]
     sites.each do |site|
-      page = site.pages.find_by_escaped_full_path(self.escaped_full_path_was || self.escaped_full_path) || site.pages.build
+      page = site.pages.find_by_full_path(self.full_path_was || self.full_path) || site.pages.build
 
-      parent = site.pages.find_by_escaped_full_path(self.parent.try(:escaped_full_path))
+      parent = site.pages.find_by_full_path(self.parent.try(:full_path))
       layout = site.layouts.find_by_identifier(self.layout.identifier)
 
       # Need to use :parent with MongoMapper, as before save doesn't sync up assignment on :parent_id before before_save callbacks.
       page.attributes = {
-          :escaped_slug => self.escaped_slug,
+          :slug => self.slug,
           :label        => self.slug.blank? ? self.label : page.label,
           :parent       => parent,
           :layout       => layout
@@ -218,39 +219,47 @@ class Cms::Orm::MongoMapper::Page
     }
   end
 
+  ##
+  ## We have convenience methods to convert between escaped and unescaped slugs and full_paths
+  ##
+  #def full_path_dirty
+  #  self.escaped_full_path_dirty
+  #end
   #
-  # We have convenience methods to convert between escaped and unescaped slugs and full_paths
+  #def full_path_was
+  #  CGI::unescape(self.escaped_full_path_was) if self.escaped_full_path_was
+  #end
   #
-  def full_path_dirty
-    self.escaped_full_path_dirty
+  #def full_path=(value)
+  #  self.escaped_full_path = "#{CGI::escape(value).gsub('%2F', '/')}".squeeze('/')
+  #end
+  #
+  #def full_path
+  #  CGI::unescape(self.escaped_full_path) if self.escaped_full_path
+  #end
+  #
+  #def slug_dirty
+  #  self.escaped_slug_dirty
+  #end
+  #
+  #def slug_was
+  #  CGI::unescape(self.escaped_slug_was) if self.escaped_slug_was
+  #end
+  #
+  #def slug=(value)
+  #  self.escaped_slug = CGI::escape(value) if value
+  #end
+  #
+  #def slug
+  #  CGI::unescape(self.escaped_slug) if self.escaped_slug
+  #end
+
+  def escaped_full_path
+    "#{CGI::escape(self.full_path).gsub('%2F', '/')}".squeeze('/') if self.full_path
   end
 
-  def full_path_was
-    CGI::unescape(self.escaped_full_path_was) if self.escaped_full_path_was
-  end
-
-  def full_path=(value)
-    self.escaped_full_path = "#{CGI::escape(value).gsub('%2F', '/')}".squeeze('/')
-  end
-
-  def full_path
-    CGI::unescape(self.escaped_full_path) if self.escaped_full_path
-  end
-
-  def slug_dirty
-    self.escaped_slug_dirty
-  end
-
-  def slug_was
-    CGI::unescape(self.escaped_slug_was) if self.escaped_slug_was
-  end
-
-  def slug=(value)
-    self.escaped_slug = CGI::escape(value) if value
-  end
-
-  def slug
-    CGI::unescape(self.escaped_slug) if self.escaped_slug
+  def escaped_slug
+    "#{CGI::escape(self.slug)}" if self.slug
   end
 
   protected
@@ -268,7 +277,7 @@ class Cms::Orm::MongoMapper::Page
 
   # before_save :assign_full_path
   def assign_full_path
-    self.escaped_full_path = self.parent ? "#{self.parent.escaped_full_path}/#{self.escaped_slug}".squeeze('/') : '/'
+    self.full_path = self.parent ? "#{self.parent.full_path}/#{self.slug}".squeeze('/') : '/'
   end
 
   # before_create :assign_position
@@ -282,6 +291,19 @@ class Cms::Orm::MongoMapper::Page
         #max = self.siblings.map(&:position).max
         max = Cms::Page.where( :parent_id => self.parent_id).all.map(&:position).max
         self.position = max ? max + 1 : 0
+      end
+    end
+  end
+
+  def validate_slug_format
+    pattern = '^\\p{Alnum}[\\.\\p{Alnum}_-]*$'
+
+    if self.slug
+      encoding = self.slug.encoding
+      enc_rexp = Regexp.new(pattern.encode(encoding), Regexp::IGNORECASE)
+      ret = enc_rexp.match(slug)
+      if (!ret)
+        self.errors.add(:slug, "is not valid format")
       end
     end
   end
@@ -304,9 +326,8 @@ class Cms::Orm::MongoMapper::Page
   # after_save  :sync_child_pages
   # Forcing re-saves for child pages so they can update full_paths
   def sync_child_pages
-    if @full_path_dirty || escaped_full_path_changed?
+    if self.full_path_changed?
       self.children.all.each { |p| p.save! }
-      @full_path_dirty = false
     end
   end
 end
