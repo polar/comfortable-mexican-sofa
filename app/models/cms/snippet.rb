@@ -1,3 +1,3 @@
-class Cms::Snippet < Cms::Orm::Snippet
-
+class Cms::Snippet <
+    "Cms::Orm::#{ComfortableMexicanSofa.config.backend.to_s.classify}::Snippet".constantize
 end

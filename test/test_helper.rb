@@ -21,7 +21,6 @@ class ActiveSupport::TestCase
     DatabaseCleaner.clean
     setup_blueprints
     reset_config
-    puts "****************************END OF SETUP *******************************************"
   end
   
   # resetting default configuration
@@ -118,7 +117,6 @@ class ActionController::TestCase
     DatabaseCleaner.clean
     setup_blueprints
     reset_config
-    puts "****************************END OF SETUP *******************************************"
   end
 end
 

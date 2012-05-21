@@ -117,8 +117,10 @@ module BlueprintFixtureMap
     site.layouts << @cms_layouts[:child]
 
     @cms_pages[:child] =
-        Cms::Page.make(:child, :layout => layout, :parent => page)
-    site.pages << @cms_pages[:child]
+        Cms::Page.make(:child, :layout => layout)
+    site.pages << @cms_pages[:child]  # automatically makes @cms_pages[:default] its parent
+    page.reload
+    assert_equal page.children_count, page.children.count
 
     @cms_revisions[:layout] =
         Cms::Revision.make!(:layout, :record => layout)

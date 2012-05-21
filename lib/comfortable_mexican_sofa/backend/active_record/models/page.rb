@@ -11,7 +11,7 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
                 :blocks_attributes_changed
 
   self.table_name = 'cms_pages'
-  
+
   # -- Relationships --------------------------------------------------------
   belongs_to :site, :class_name => "Cms::Site"
   belongs_to :layout, :class_name => "Cms::Layout"

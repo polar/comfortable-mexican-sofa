@@ -3,14 +3,11 @@ module ComfortableMexicanSofa::MongoMapper::ActsAsTree
   #include MongoMapper::Plugins::ActsAsTree
 
   def self.included(base)
-    puts "Including on #{base}"
     base.extend(ClassMethods)
-    puts "Extended on #{base}"
   end
   
   module ClassMethods
     def cms_acts_as_tree(options = {})
-      puts "MongoMapper::Acts as Tree! '#{name}'  '#{self.name}' #{self.superclass.superclass.name}"
       configuration = {
         :class_name     => name,
         :foreign_key    => 'parent_id', 
@@ -49,7 +46,6 @@ module ComfortableMexicanSofa::MongoMapper::ActsAsTree
       class_eval <<-EOV
         include ComfortableMexicanSofa::MongoMapper::ActsAsTree::InstanceMethods
 
-        puts "Setting up Roots"
         scope :roots,  where("#{configuration[:foreign_key]}" => nil).order("#{configuration[:order]}")
 
         def #{configuration[:counter_cache]||'children_count'}

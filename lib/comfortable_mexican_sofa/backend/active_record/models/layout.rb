@@ -2,7 +2,6 @@ class Cms::Orm::ActiveRecord::Layout < ActiveRecord::Base
 
   include ComfortableMexicanSofa::ActiveRecord::ActsAsTree
   include ComfortableMexicanSofa::ActiveRecord::HasRevisions
-  include ComfortableMexicanSofa::ActiveRecord::IsMirrored
 
   ComfortableMexicanSofa.establish_connection(self)
     
@@ -19,7 +18,6 @@ class Cms::Orm::ActiveRecord::Layout < ActiveRecord::Base
   # Need to specify the topmost class
   cms_acts_as_tree  :class_name => "Cms::Layout"
   cms_has_revisions_for :content, :css, :js
-  cms_is_mirrored
 
   # -- Callbacks ------------------------------------------------------------
   before_validation :assign_label
@@ -61,6 +59,47 @@ class Cms::Orm::ActiveRecord::Layout < ActiveRecord::Base
     end.compact.sort
   end
 
+  # -- Mirrors --------------------------------------------------------------
+
+  attr_accessor :is_mirrored
+
+  after_save    :sync_mirror
+  after_destroy :destroy_mirror
+
+  # Mirrors of the object found on other sites
+  def mirrors
+    return [] unless self.site.is_mirrored?
+    sites = Cms::Site.mirrored.all - [self.site]
+    sites.collect do |site|
+      site.layouts.find_by_identifier(self.identifier)
+    end.compact
+  end
+
+  def sync_mirror
+    return if self.is_mirrored || !self.site.is_mirrored?
+
+    sites = Cms::Site.mirrored.all - [self.site]
+    sites.each do |site|
+      layout = site.layouts.find_by_identifier(self.identifier_was || self.identifier) || site.layouts.build
+
+      layout.attributes  = {
+          :identifier => self.identifier,
+          :parent_id  => site.layouts.find_by_identifier(self.parent.try(:identifier)).try(:id)
+      }
+
+      layout.is_mirrored = true
+      layout.save
+    end
+  end
+
+  # Mirrors should be destroyed
+  def destroy_mirror
+    return if self.is_mirrored || !self.site.is_mirrored?
+    mirrors.each do |mirror|
+      mirror.is_mirrored = true
+      mirror.destroy
+    end
+  end
   # -- Instance Methods -----------------------------------------------------
   # magical merging tag is {cms:page:content} If parent layout has this tag
   # defined its content will be merged. If no such tag found, parent content

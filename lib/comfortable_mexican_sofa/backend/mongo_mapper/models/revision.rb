@@ -14,8 +14,4 @@ class Cms::Orm::MongoMapper::Revision
   scope :newest, order(:created_at.desc)
   # -- Scopes ---------------------------------------------------------------
   #default_scope order('created_at DESC')
-  def self.query(options = {})
-    p options
-    super
-  end
 end

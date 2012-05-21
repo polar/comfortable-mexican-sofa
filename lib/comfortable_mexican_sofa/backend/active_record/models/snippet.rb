@@ -3,7 +3,6 @@ class Cms::Orm::ActiveRecord::Snippet < ActiveRecord::Base
   include ComfortableMexicanSofa::ActiveRecord::ActsAsTree
   include ComfortableMexicanSofa::ActiveRecord::HasRevisions
   include ComfortableMexicanSofa::ActiveRecord::IsCategorized
-  include ComfortableMexicanSofa::ActiveRecord::IsMirrored
 
   ComfortableMexicanSofa.establish_connection(self)
   
@@ -16,7 +15,6 @@ class Cms::Orm::ActiveRecord::Snippet < ActiveRecord::Base
   default_scope order('cms_snippets.position')
   scope :excluded, lambda { |*ids| where("id NOT IN (?)", [ids].flatten.compact)}
 
-  cms_is_mirrored
   cms_is_categorized
   cms_has_revisions_for :content
 
@@ -36,6 +34,50 @@ class Cms::Orm::ActiveRecord::Snippet < ActiveRecord::Base
             :uniqueness => { :scope => :site_id },
             :format     => { :with => /^\w[a-z0-9_-]*$/i }
 
+
+  # -- Mirror ---------------------------------------------------------------
+
+  # This attribute is used to stop the recursive update in sync_mirror
+  # TODO: Fix when it should be cleared.
+  attr_accessor :is_mirrored
+
+  after_save    :sync_mirror
+  after_destroy :destroy_mirror
+
+  # Mirrors of the Snippet found on other sites
+  def mirrors
+    return [] unless self.site.is_mirrored?
+    sites = Cms::Site.mirrored.all - [self.site]
+    sites.collect do |site|
+      site.snippets.find_by_identifier(self.identifier)
+    end.compact
+  end
+
+  def sync_mirror
+    return if self.is_mirrored || !self.site.is_mirrored?
+
+    sites = Cms::Site.mirrored.all - [self.site]
+    sites.each do |site|
+      snippet = site.snippets.find_by_identifier(self.identifier_was || self.identifier) || site.snippets.build
+
+      snippet.attributes = {
+          :identifier => self.identifier
+      }
+
+      # This will stop sync_mirror being called in the after_save callback for this instance.
+      snippet.is_mirrored = true
+      snippet.save
+    end
+  end
+
+  # Mirrors will be destroyed on after_destroy
+  def destroy_mirror
+    return if self.is_mirrored || !self.site.is_mirrored?
+    mirrors.each do |mirror|
+      mirror.is_mirrored = true
+      mirror.destroy
+    end
+  end
 
   protected
 

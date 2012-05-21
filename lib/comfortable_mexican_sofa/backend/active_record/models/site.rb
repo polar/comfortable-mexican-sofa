@@ -45,7 +45,7 @@ class Cms::Orm::ActiveRecord::Site < ActiveRecord::Base
   validates :hostname,
             :presence   => true,
             :uniqueness => { :scope => :path },
-            :format     => { :with => /^[\w\.\-]+(:[0-9]+)$/ }
+            :format     => { :with => /^[\w\.\-]+(:[0-9]+)?$/ }
 
 
   # -- Class Methods --------------------------------------------------------

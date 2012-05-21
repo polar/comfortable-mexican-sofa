@@ -1,4 +1,3 @@
-# encoding: utf-8
-class Cms::Page < Cms::Orm::Page
-
+class Cms::Page <
+    "Cms::Orm::#{ComfortableMexicanSofa.config.backend.to_s.classify}::Page".constantize
 end

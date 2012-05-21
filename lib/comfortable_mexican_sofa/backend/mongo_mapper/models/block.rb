@@ -53,7 +53,6 @@ class Cms::Orm::MongoMapper::Block
     @content_files_dirty = false
     if value.is_a?(String) || value.is_a?(BSON::ObjectId)
       self.content_value = value.to_s
-      puts "WTF?"
     else
       @content_files = value # these should be file types or an array of file types
       self.content_value = nil
@@ -80,7 +79,6 @@ protected
     if page.nil? && page_id
       @_page = Cms::Page.find(page_id)
     end
-    puts "Block.prepare_files #{content.inspect} #{tag} #{page.tags(true)}"
     temp_files = [@content_files].flatten.select do |f|
       %w(ActionDispatch::Http::UploadedFile Rack::Test::UploadedFile).member?(f.class.name)
     end

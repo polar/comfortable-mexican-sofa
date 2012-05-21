@@ -125,7 +125,7 @@ class CmsBlockTest < ActiveSupport::TestCase
       page.reload
       page.content(true)
       block = page.blocks.first
-      p block
+
       assert_equal 1, block.files.count, "bad files count after update"
       assert_equal 'document.pdf', block.files.first.file_file_name, "bad filename after update"
       assert_equal block.files.first.file.url, page.content, "bad content after update"

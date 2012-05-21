@@ -11,18 +11,21 @@ class CreateCms < ActiveRecord::Migration
     
     # -- Sites --------------------------------------------------------------
     create_table :cms_sites do |t|
-      t.string :label,        :null => false
-      t.string :identifier,   :null => false
-      t.string :hostname,     :null => false
-      t.string :path
-      t.string :locale,       :null => false, :default => 'en'
-      t.boolean :is_mirrored, :null => false, :default => false
+      t.string   :type
+      t.string   :label,        :null => false
+      t.string   :identifier,   :null => false
+      t.string   :hostname,     :null => false
+      t.string   :path
+      t.string   :locale,       :null => false, :default => 'en'
+      t.boolean  :is_mirrored, :null => false, :default => false
+      t.datetime :created_at
     end
     add_index :cms_sites, :hostname
     add_index :cms_sites, :is_mirrored
     
     # -- Layouts ------------------------------------------------------------
     create_table :cms_layouts do |t|
+      t.string  :type
       t.integer :site_id,     :null => false
       t.integer :parent_id
       t.string  :app_layout
@@ -31,7 +34,7 @@ class CreateCms < ActiveRecord::Migration
       t.text    :content,     text_limit
       t.text    :css,         text_limit
       t.text    :js,          text_limit
-      t.integer :position,    :null => false, :default => 0
+      t.integer :position,    :null => false, :default => -1
       t.boolean :is_shared,   :null => false, :default => false
       t.timestamps
     end
@@ -40,6 +43,7 @@ class CreateCms < ActiveRecord::Migration
     
     # -- Pages --------------------------------------------------------------
     create_table :cms_pages do |t|
+      t.string  :type
       t.integer :site_id,         :null => false
       t.integer :layout_id
       t.integer :parent_id
@@ -47,8 +51,9 @@ class CreateCms < ActiveRecord::Migration
       t.string  :label,           :null => false
       t.string  :slug
       t.string  :full_path,       :null => false
-      t.text    :content,         text_limit
-      t.integer :position,        :null => false, :default => 0
+      t.text    :content_cache,    text_limit
+      t.boolean :content_dirty
+      t.integer :position,        :null => false, :default => -1
       t.integer :children_count,  :null => false, :default => 0
       t.boolean :is_published,    :null => false, :default => true
       t.boolean :is_shared,       :null => false, :default => false
@@ -59,6 +64,7 @@ class CreateCms < ActiveRecord::Migration
     
     # -- Page Blocks --------------------------------------------------------
     create_table :cms_blocks do |t|
+      t.string    :type
       t.integer   :page_id,     :null => false
       t.string    :identifier,  :null => false
       t.text      :content
@@ -68,11 +74,12 @@ class CreateCms < ActiveRecord::Migration
     
     # -- Snippets -----------------------------------------------------------
     create_table :cms_snippets do |t|
+      t.string  :type
       t.integer :site_id,     :null => false
       t.string  :label,       :null => false
       t.string  :identifier,  :null => false
       t.text    :content,     text_limit
-      t.integer :position,    :null => false, :default => 0
+      t.integer :position,    :null => false, :default => -1
       t.boolean :is_shared,   :null => false, :default => false
       t.timestamps
     end
@@ -81,6 +88,7 @@ class CreateCms < ActiveRecord::Migration
     
     # -- Files --------------------------------------------------------------
     create_table :cms_files do |t|
+      t.string  :type
       t.integer :site_id,           :null => false
       t.integer :block_id
       t.string  :label,             :null => false
@@ -88,7 +96,7 @@ class CreateCms < ActiveRecord::Migration
       t.string  :file_content_type, :null => false
       t.integer :file_file_size,    :null => false
       t.string  :description,       :limit => 2048
-      t.integer :position,          :null => false, :default => 0
+      t.integer :position,          :null => false, :default => -1
       t.timestamps
     end
     add_index :cms_files, [:site_id, :label]
@@ -98,6 +106,7 @@ class CreateCms < ActiveRecord::Migration
     
     # -- Revisions -----------------------------------------------------------
     create_table :cms_revisions, :force => true do |t|
+      t.string    :type
       t.string    :record_type, :null => false
       t.integer   :record_id,   :null => false
       t.text      :data,        text_limit
@@ -107,6 +116,7 @@ class CreateCms < ActiveRecord::Migration
     
     # -- Categories ---------------------------------------------------------
     create_table :cms_categories, :force => true do |t|
+      t.string  :type
       t.integer :site_id,          :null => false
       t.string  :label,            :null => false
       t.string  :categorized_type, :null => false
@@ -114,6 +124,7 @@ class CreateCms < ActiveRecord::Migration
     add_index :cms_categories, [:site_id, :categorized_type, :label], :unique => true
     
     create_table :cms_categorizations, :force => true do |t|
+      t.string  :type
       t.integer :category_id,       :null => false
       t.string  :categorized_type,  :null => false
       t.integer :categorized_id,    :null => false

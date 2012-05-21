@@ -15,11 +15,8 @@ class CreateTest < ActiveSupport::TestCase
     assert_equal site, page.site, "bad site"
     assert_equal layout, page.layout, "bad layout"
 
-    puts "===================LAYOUT RELOAD=========================="
     layout.reload
     assert_equal site, layout.site, "bad site after layout reload"
-
-    puts "===================PAGE RELOAD=========================="
     page.save!
     page.reload
     assert_equal site, page.site, "bad site after page reload"
