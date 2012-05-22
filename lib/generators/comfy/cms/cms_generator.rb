@@ -22,7 +22,13 @@ module Comfy
       
       def generate_initialization
         copy_file 'config/initializers/comfortable_mexican_sofa.rb',
-          'config/initializers/comfortable_mexican_sofa.rb'
+                  'config/initializers/comfortable_mexican_sofa.rb'
+        copy_file 'config/initializers/cms_active_record.rb',
+                  'config/initializers/cms_active_record.rb'
+        copy_file 'config/initializers/cms_mongo_mapper.rb',
+                  'config/initializers/cms_mongo_mapper.rb'
+        copy_file 'config/initializers/cms_mongo_db.rb',
+                  'config/initializers/cms_mongo_db.rb'
       end
       
       def generate_public_assets

@@ -9,7 +9,8 @@
   | |  | |  __/>  <| | (_| (_| | | | |  ___) | (_) |  _| (_| |
   |_|  |_|\___/_/\_\_|\___\__,_|_| |_| |____/ \___/|_|  \__,_|
 
-Hey! Everything is almost done. Please don't forget to
+Hey! Everything is almost done. If you are using ActiveRecord
+please don't forget to
   
   * run migrations -> `rake db:migrate`
   
