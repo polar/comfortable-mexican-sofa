@@ -14,18 +14,19 @@ Features
 * [Revision History](https://github.com/comfy/comfortable-mexican-sofa/wiki/Revisions)
 * [Great reusable admin interface](https://github.com/comfy/comfortable-mexican-sofa/wiki/Reusing-sofa%27s-admin-area)
 * Almost no 3rd party library dependencies
+* Multiple ORM Support (ActiveRecord and MongoMapper)
 
 Installation
 ------------
 Add gem definition to your Gemfile:
     
-    gem 'comfortable_mexican_sofa'
+    gem 'comfortable_mexican_sofa', :git => git://github.com/polar/comfortable-mexican-sofa.git, :branch => :mongo_mapper
     
 Then from the Rails project's root run:
     
     bundle install
     rails generate comfy:cms
-    rake db:migrate
+    rake db:migrate    # if using ActiveRecord, MongoMapper does not require migrations.
     
 When upgrading from the older version please take a look at [Upgrading ComfortableMexicanSofa](https://github.com/comfy/comfortable-mexican-sofa/wiki/Upgrading-ComfortableMexicanSofa)
     
@@ -57,3 +58,4 @@ For more information please [see Wiki pages](https://github.com/comfy/comfortabl
 ComfortableMexicanSofa is released under the [MIT license](https://github.com/comfy/comfortable-mexican-sofa/raw/master/LICENSE) 
 
 Copyright 2009-2011 Oleg Khabarov, [The Working Group Inc](http://www.twg.ca)
+Copyright 2012 Polar Humenn

@@ -5,18 +5,19 @@
 
 Gem::Specification.new do |s|
   s.name = "comfortable_mexican_sofa"
-  s.version = "1.6.18"
+  s.version = "1.7.0.pre1"
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Oleg Khabarov", "The Working Group Inc"]
-  s.date = "2012-03-27"
+  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
+  s.authors = ["Oleg Khabarov", "The Working Group Inc", "Polar Humenn"]
+  s.date = "2012-05-22"
   s.description = ""
-  s.email = "oleg@theworkinggroup.ca"
+  s.email = ["oleg@theworkinggroup.ca", "polar@adiron.com"]
   s.extra_rdoc_files = [
     "LICENSE",
     "README.md"
   ]
   s.files = [
+    ".idea/dataSources.xml",
     ".travis.yml",
     "Gemfile",
     "LICENSE",
@@ -172,6 +173,10 @@ Gem::Specification.new do |s|
     "config/environments/development.rb",
     "config/environments/production.rb",
     "config/environments/test.rb",
+    "config/initializers/array_extensions.rb",
+    "config/initializers/cms_active_record.rb",
+    "config/initializers/cms_mongo_mapper.rb",
+    "config/initializers/cms_mongodb.rb",
     "config/initializers/comfortable_mexican_sofa.rb",
     "config/initializers/paperclip.rb",
     "config/locales/en.yml",
@@ -203,18 +208,41 @@ Gem::Specification.new do |s|
     "db/upgrade_migrations/05_upgrade_to_1_4_0.rb",
     "db/upgrade_migrations/06_upgrade_to_1_5_0.rb",
     "db/upgrade_migrations/07_upgrade_to_1_6_0.rb",
+    "db/upgrade_migrations/08_upgrade_to_1_7_0.rb",
     "doc/preview.png",
     "doc/sofa.png",
     "lib/comfortable_mexican_sofa.rb",
     "lib/comfortable_mexican_sofa/authentication/dummy_auth.rb",
     "lib/comfortable_mexican_sofa/authentication/http_auth.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/extensions/acts_as_tree.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/extensions/has_revisions.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/extensions/is_categorized.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/models/block.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/models/categorization.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/models/category.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/models/file.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/models/layout.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/models/page.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/models/revision.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/models/site.rb",
+    "lib/comfortable_mexican_sofa/backend/active_record/models/snippet.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/extensions/acts_as_tree.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/extensions/has_revisions.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/extensions/is_categorized.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/models/block.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/models/categorization.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/models/category.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/models/file.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/models/layout.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/models/page.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/models/revision.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/models/site.rb",
+    "lib/comfortable_mexican_sofa/backend/mongo_mapper/models/snippet.rb",
     "lib/comfortable_mexican_sofa/configuration.rb",
     "lib/comfortable_mexican_sofa/engine.rb",
     "lib/comfortable_mexican_sofa/error.rb",
-    "lib/comfortable_mexican_sofa/extensions/acts_as_tree.rb",
-    "lib/comfortable_mexican_sofa/extensions/has_revisions.rb",
-    "lib/comfortable_mexican_sofa/extensions/is_categorized.rb",
-    "lib/comfortable_mexican_sofa/extensions/is_mirrored.rb",
     "lib/comfortable_mexican_sofa/extensions/rails.rb",
     "lib/comfortable_mexican_sofa/fixtures.rb",
     "lib/comfortable_mexican_sofa/form_builder.rb",
@@ -247,6 +275,16 @@ Gem::Specification.new do |s|
     "lib/tasks/comfortable_mexican_sofa.rake",
     "rvmrc.example",
     "script/rails",
+    "test/blueprint_fixture_map.rb",
+    "test/blueprints/block.rb",
+    "test/blueprints/categorization.rb",
+    "test/blueprints/category.rb",
+    "test/blueprints/file.rb",
+    "test/blueprints/layout.rb",
+    "test/blueprints/page.rb",
+    "test/blueprints/revision.rb",
+    "test/blueprints/site.rb",
+    "test/blueprints/snippet.rb",
     "test/fixtures/cms/blocks.yml",
     "test/fixtures/cms/categories.yml",
     "test/fixtures/cms/categorizations.yml",
@@ -292,6 +330,7 @@ Gem::Specification.new do |s|
     "test/unit/models/block_test.rb",
     "test/unit/models/categorization_test.rb",
     "test/unit/models/category_test.rb",
+    "test/unit/models/create_test.rb",
     "test/unit/models/file_test.rb",
     "test/unit/models/layout_test.rb",
     "test/unit/models/page_test.rb",
@@ -320,9 +359,9 @@ Gem::Specification.new do |s|
     "test/unit/tags/snippet_test.rb",
     "test/unit/view_methods_test.rb"
   ]
-  s.homepage = "http://github.com/comfy/comfortable-mexican-sofa"
+  s.homepage = "http://github.com/polar/comfortable-mexican-sofa"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
+  s.rubygems_version = "1.8.15"
   s.summary = "ComfortableMexicanSofa is a powerful CMS Engine for Ruby on Rails 3 applications"
 
   if s.respond_to? :specification_version then
@@ -332,15 +371,24 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rails>, [">= 3.0.0"])
       s.add_runtime_dependency(%q<active_link_to>, ["~> 1.0.0"])
       s.add_runtime_dependency(%q<paperclip>, [">= 2.3.0"])
+      s.add_development_dependency(%q<linecache19>, ["= 0.5.13"])
+      s.add_development_dependency(%q<ruby-debug-base19x>, ["= 0.11.30.pre10"])
+      s.add_development_dependency(%q<ruby-debug-ide>, [">= 0"])
     else
       s.add_dependency(%q<rails>, [">= 3.0.0"])
       s.add_dependency(%q<active_link_to>, ["~> 1.0.0"])
       s.add_dependency(%q<paperclip>, [">= 2.3.0"])
+      s.add_dependency(%q<linecache19>, ["= 0.5.13"])
+      s.add_dependency(%q<ruby-debug-base19x>, ["= 0.11.30.pre10"])
+      s.add_dependency(%q<ruby-debug-ide>, [">= 0"])
     end
   else
     s.add_dependency(%q<rails>, [">= 3.0.0"])
     s.add_dependency(%q<active_link_to>, ["~> 1.0.0"])
     s.add_dependency(%q<paperclip>, [">= 2.3.0"])
+    s.add_dependency(%q<linecache19>, ["= 0.5.13"])
+    s.add_dependency(%q<ruby-debug-base19x>, ["= 0.11.30.pre10"])
+    s.add_dependency(%q<ruby-debug-ide>, [">= 0"])
   end
 end
 

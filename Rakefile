@@ -13,9 +13,9 @@ begin
     gem.name        = 'comfortable_mexican_sofa'
     gem.summary     = 'ComfortableMexicanSofa is a powerful CMS Engine for Ruby on Rails 3 applications'
     gem.description = ''
-    gem.email       = 'oleg@theworkinggroup.ca'
-    gem.homepage    = 'http://github.com/comfy/comfortable-mexican-sofa'
-    gem.authors     = ['Oleg Khabarov', 'The Working Group Inc']
+    gem.email       = ['oleg@theworkinggroup.ca', 'polar@adiron.com']
+    gem.homepage    = 'http://github.com/polar/comfortable-mexican-sofa'
+    gem.authors     = ['Oleg Khabarov', 'The Working Group Inc', 'Polar Humenn']
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
