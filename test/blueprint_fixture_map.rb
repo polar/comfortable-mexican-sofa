@@ -129,6 +129,8 @@ module BlueprintFixtureMap
     @cms_revisions[:snippet] =
         Cms::Revision.make!(:snippet, :record => snippet)
 
+    @cms_sites[:with_path] = Cms::Site.make!(:with_path)
+
     page.reload
     layout.reload
     @cms_layouts[:child].reload

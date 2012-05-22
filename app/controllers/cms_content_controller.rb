@@ -62,7 +62,7 @@ protected
     @cms_page = @cms_site.pages.published.find_by_full_path!("/#{params[:cms_path]}")
     raise ComfortableMexicanSofa.ModelNotFound if @cms_page.nil?
 
-    return redirect_to(@cms_page.target_page.full_path) if @cms_page.target_page
+    return redirect_to(@cms_page.target_page.url) if @cms_page.target_page
 
   rescue ComfortableMexicanSofa.ModelNotFound
     if @cms_page = @cms_site.pages.published.find_by_full_path('/404')

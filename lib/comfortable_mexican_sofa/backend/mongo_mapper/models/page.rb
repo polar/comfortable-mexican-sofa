@@ -164,13 +164,6 @@ class Cms::Orm::MongoMapper::Page
   end
 
   # -- Instance Methods -----------------------------------------------------
-  ## For previewing purposes sometimes we need to have full_path set
-  #MongoMapper you cannot create or override methods that are keys that are assigned by save callbacks. It
-  #screws things up. Stop with the "magic", already.
-  #
-  #def full_path
-  #  self.read_attribute(:full_path) || self.assign_full_path
-  #end
 
   # Processing content will return rendered content and will populate
   # self.tags with instances of CmsTag
@@ -205,7 +198,7 @@ class Cms::Orm::MongoMapper::Page
 
   # Full url for a page
   def url
-    "http://#{self.site.hostname}#{self.full_path}"
+    "http://" + "#{self.site.hostname}/#{site.path}/#{self.full_path}".squeeze("/")
   end
 
   # Method to collect previous state of blocks for revisions

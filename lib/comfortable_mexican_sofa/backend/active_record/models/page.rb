@@ -189,7 +189,7 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
 
   # Full url for a page
   def url
-    "http://#{self.site.hostname}#{self.full_path}"
+    "http://" + "#{self.site.hostname}/#{site.path}/#{self.full_path}".squeeze("/")
   end
 
   # Method to collect previous state of blocks for revisions
@@ -203,33 +203,9 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
     }
   end
 
-  #def escaped_full_path_dirty
-  #  self.escaped_full_path_dirty
-  #end
-  #
-  #def escaped_full_path_was
-  #  "#{CGI::escape(self.full_path_was).gsub('%2F', '/')}".squeeze('/') if self.escaped_full_path_was
-  #end
-  #
-  #def escaped_full_path=(value)
-  #  self.escaped_full_path = "#{CGI::escape(value).gsub('%2F', '/')}".squeeze('/')
-  #end
-
   def escaped_full_path
     "#{CGI::escape(self.full_path).gsub('%2F', '/')}".squeeze('/') if self.full_path
   end
-
-  #def escaped_slug_dirty
-  #  self.slug_dirty
-  #end
-
-  #def escaped_slug_was
-  #  CGI::escape(self.slug_was) if self.slug_was
-  #end
-  #
-  #def escaped_slug=(value)
-  #  self.slug = CGI::unescape(value) if value
-  #end
 
   def escaped_slug
     "#{CGI::escape(self.slug).gsub('%2F', '/')}".squeeze('/') if self.slug

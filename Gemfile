@@ -4,6 +4,12 @@ gem 'rails',          '>=3.0.0'
 gem 'active_link_to', '~>1.0.0'
 gem 'paperclip',      '>=2.3.0'
 
+group :development do
+  gem 'linecache19', '0.5.13'
+  gem 'ruby-debug-base19x', '0.11.30.pre10'
+  gem 'ruby-debug-ide'
+end
+
 group "mongo_mapper" do
   gem 'bson_ext'
   gem 'mongo_mapper'
