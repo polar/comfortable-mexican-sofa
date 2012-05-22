@@ -7,6 +7,9 @@ class Cms::Orm::ActiveRecord::Layout < ActiveRecord::Base
     
   self.table_name = 'cms_layouts'
 
+  attr_accessible :app_layout, :label, :identifier, :content, :css, :js, :position, :is_shared
+  attr_accessible :site, :site_id
+
   # -- Relationships --------------------------------------------------------
   belongs_to :site, :class_name => "Cms::Site"
   has_many :pages, :class_name => "Cms::Page", :dependent => :nullify
