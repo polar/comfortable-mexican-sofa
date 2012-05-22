@@ -8,6 +8,9 @@ class Cms::Orm::ActiveRecord::Snippet < ActiveRecord::Base
   
   self.table_name = 'cms_snippets'
 
+  attr_accessible :label, :identifier, :content, :position, :is_shared
+  attr_accessible :site, :site_id
+
   # -- Relationships --------------------------------------------------------
   belongs_to :site, :class_name => "Cms::Site"
 

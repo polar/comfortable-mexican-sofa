@@ -1,53 +1,48 @@
-module Cms
-  module Orm
-    module ActiveRecord
-      class Block  < ::ActiveRecord::Base
+class Cms::Orm::ActiveRecord::Block < ::ActiveRecord::Base
 
-        ComfortableMexicanSofa.establish_connection(self)
+  ComfortableMexicanSofa.establish_connection(self)
 
-        self.table_name = 'cms_blocks'
+  self.table_name = 'cms_blocks'
 
-        # -- Relationships --------------------------------------------------------
-        belongs_to :page, :class_name => "Cms::Page"
-        has_many :files, :class_name => "Cms::File",
-                 :autosave           => true,
-                 :dependent          => :destroy
+  attr_accessible :page, :page_id, :identifier, :content
 
-        # -- Callbacks ------------------------------------------------------------
-        before_save :prepare_files
+  # -- Relationships --------------------------------------------------------
+  belongs_to :page, :class_name => "Cms::Page"
+  has_many :files, :class_name => "Cms::File",
+           :autosave           => true,
+           :dependent          => :destroy
 
-        # -- Validations ----------------------------------------------------------
-        validates :identifier,
-                  :presence   => true,
-                  :uniqueness => { :scope => :page_id }
+  # -- Callbacks ------------------------------------------------------------
+  before_save :prepare_files
 
-        # -- Instance Methods -----------------------------------------------------
-        # Tag object that is using this block
-        def tag
-          @tag ||= page.tags(true).detect { |t| t.is_cms_block? && t.identifier == identifier }
-        end
+  # -- Validations ----------------------------------------------------------
+  validates :identifier,
+            :presence   => true,
+            :uniqueness => { :scope => :page_id }
 
-        protected
+  # -- Instance Methods -----------------------------------------------------
+  # Tag object that is using this block
+  def tag
+    @tag ||= page.tags(true).detect { |t| t.is_cms_block? && t.identifier == identifier }
+  end
 
-        def prepare_files
-          return if page.nil?
-          temp_files  = [self.content].flatten.select do |f|
-            %w(ActionDispatch::Http::UploadedFile Rack::Test::UploadedFile).member?(f.class.name)
-          end
+  protected
 
-          # only accepting one file if it's PageFile. PageFiles will take all
-          single_file = self.tag.is_a?(ComfortableMexicanSofa::Tag::PageFile)
-          temp_files = [temp_files.first].compact if single_file
-
-          temp_files.each do |file|
-            self.files.collect { |f| f.mark_for_destruction } if single_file
-            self.files.build(:site => self.page.site, :dimensions => self.tag.try(:dimensions), :file => file)
-          end
-
-          self.content = nil unless self.content.is_a?(String)
-        end
-      end
+  def prepare_files
+    return if page.nil?
+    temp_files  = [self.content].flatten.select do |f|
+      %w(ActionDispatch::Http::UploadedFile Rack::Test::UploadedFile).member?(f.class.name)
     end
+
+    # only accepting one file if it's PageFile. PageFiles will take all
+    single_file = self.tag.is_a?(ComfortableMexicanSofa::Tag::PageFile)
+    temp_files = [temp_files.first].compact if single_file
+
+    temp_files.each do |file|
+      self.files.collect { |f| f.mark_for_destruction } if single_file
+      self.files.build(:site => self.page.site, :dimensions => self.tag.try(:dimensions), :file => file)
+    end
+
+    self.content = nil unless self.content.is_a?(String)
   end
 end
-

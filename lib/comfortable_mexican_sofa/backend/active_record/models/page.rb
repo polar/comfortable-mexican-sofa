@@ -7,10 +7,14 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
 
   ComfortableMexicanSofa.establish_connection(self)
 
-  attr_accessor :tags,
-                :blocks_attributes_changed
-
   self.table_name = 'cms_pages'
+
+  attr_accessible :full_path, :escaped_full_path
+  attr_accessible :label, :slug, :escaped_slug, :content, :position, :children_count, :is_published, :is_shared
+  attr_accessible :site, :site_id
+  attr_accessible :layout, :layout_id
+  attr_accessible :parent, :parent_id
+  attr_accessible :target_page, :target_page_id
 
   # -- Relationships --------------------------------------------------------
   belongs_to :site, :class_name => "Cms::Site"
@@ -52,6 +56,10 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
   default_scope order('cms_pages.position')
   scope :published, where(:is_published => true)
   scope :excluded, lambda { |*ids| where("id NOT IN (?)", [ids].flatten.compact)}
+
+  attr_accessible :blocks_attributes
+  attr_accessor :tags,
+                :blocks_attributes_changed
 
   # -- Mirrors --------------------------------------------------------------
 

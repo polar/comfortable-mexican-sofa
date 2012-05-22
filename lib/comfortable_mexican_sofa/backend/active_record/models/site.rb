@@ -4,7 +4,9 @@ class Cms::Orm::ActiveRecord::Site < ActiveRecord::Base
   ComfortableMexicanSofa.establish_connection(self)
   
   self.table_name = 'cms_sites'
-  
+
+  attr_accessible :label, :identifier, :hostname, :path, :locale, :is_mirrored
+
   # -- Relationships --------------------------------------------------------
   has_many :layouts,    :class_name => "Cms::Layout", :dependent => :delete_all
   has_many :pages,      :class_name => "Cms::Page", :dependent => :delete_all

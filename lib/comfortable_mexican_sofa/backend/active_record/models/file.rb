@@ -8,6 +8,9 @@ class Cms::Orm::ActiveRecord::File < ActiveRecord::Base
     
   self.table_name = 'cms_files'
 
+  attr_accessible :label, :file, :file_file_name, :file_content_type, :file_file_size, :description, :position
+  attr_accessible :site, :site_id, :block, :block_id
+
   # -- Relationships --------------------------------------------------------
   belongs_to :site, :class_name => "Cms::Site"
   belongs_to :block, :class_name => "Cms::Block"

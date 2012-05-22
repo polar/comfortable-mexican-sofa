@@ -212,41 +212,6 @@ class Cms::Orm::MongoMapper::Page
     }
   end
 
-  ##
-  ## We have convenience methods to convert between escaped and unescaped slugs and full_paths
-  ##
-  #def full_path_dirty
-  #  self.escaped_full_path_dirty
-  #end
-  #
-  #def full_path_was
-  #  CGI::unescape(self.escaped_full_path_was) if self.escaped_full_path_was
-  #end
-  #
-  #def full_path=(value)
-  #  self.escaped_full_path = "#{CGI::escape(value).gsub('%2F', '/')}".squeeze('/')
-  #end
-  #
-  #def full_path
-  #  CGI::unescape(self.escaped_full_path) if self.escaped_full_path
-  #end
-  #
-  #def slug_dirty
-  #  self.escaped_slug_dirty
-  #end
-  #
-  #def slug_was
-  #  CGI::unescape(self.escaped_slug_was) if self.escaped_slug_was
-  #end
-  #
-  #def slug=(value)
-  #  self.escaped_slug = CGI::escape(value) if value
-  #end
-  #
-  #def slug
-  #  CGI::unescape(self.escaped_slug) if self.escaped_slug
-  #end
-
   def escaped_full_path
     "#{CGI::escape(self.full_path).gsub('%2F', '/')}".squeeze('/') if self.full_path
   end

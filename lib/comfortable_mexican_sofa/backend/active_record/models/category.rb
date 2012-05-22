@@ -3,7 +3,10 @@ class Cms::Orm::ActiveRecord::Category < ActiveRecord::Base
   ComfortableMexicanSofa.establish_connection(self)
   
   self.table_name = 'cms_categories'
-  
+
+  attr_accessible :label, :categorized_type
+  attr_accessible :site, :site_id
+
   # -- Relationships --------------------------------------------------------
   belongs_to :site, :class_name => "Cms::Site"
   has_many :categorizations, :class_name => "Cms::Categorization",
