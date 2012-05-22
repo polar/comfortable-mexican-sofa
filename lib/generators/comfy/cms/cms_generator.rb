@@ -27,8 +27,8 @@ module Comfy
                   'config/initializers/cms_active_record.rb'
         copy_file 'config/initializers/cms_mongo_mapper.rb',
                   'config/initializers/cms_mongo_mapper.rb'
-        copy_file 'config/initializers/cms_mongo_db.rb',
-                  'config/initializers/cms_mongo_db.rb'
+        copy_file 'config/initializers/cms_mongodb.rb',
+                  'config/initializers/cms_mongodb.rb'
       end
       
       def generate_public_assets
