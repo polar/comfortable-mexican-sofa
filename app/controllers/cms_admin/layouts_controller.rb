@@ -5,7 +5,7 @@ class CmsAdmin::LayoutsController < CmsAdmin::BaseController
 
   def index
     return redirect_to :action => :new if @site.layouts.count == 0
-    @layouts = @site.layouts.roots
+    @layouts = @site.layouts.roots.all
   end
 
   def new
