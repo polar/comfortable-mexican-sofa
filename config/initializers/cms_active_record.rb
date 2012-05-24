@@ -7,4 +7,12 @@ if  ComfortableMexicanSofa.config.backend.to_s == "active_record"
   if Rails.env == "test"
     require "machinist/active_record"
   end
+
+  # This extension is needed so that arrays that seem like MongoMapper Associations
+  # can be treated the same.
+  class Array
+    def all
+      self
+    end
+  end
 end
