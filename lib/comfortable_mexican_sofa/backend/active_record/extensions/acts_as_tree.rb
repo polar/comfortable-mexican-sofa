@@ -20,7 +20,9 @@ module ComfortableMexicanSofa::ActiveRecord::ActsAsTree
         :foreign_key    => configuration[:foreign_key],
         :counter_cache  => configuration[:counter_cache],
         :touch          => configuration[:touch]
-        
+
+      attr_accessible :parent, :parent_id
+
       has_many :children,
         :class_name     => configuration[:class_name],
         :foreign_key    => configuration[:foreign_key],
