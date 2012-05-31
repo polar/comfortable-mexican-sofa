@@ -49,12 +49,11 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
         file.rewind
         # We use a delegation class on the file returned
         upload = ActionDispatch::Http::UploadedFile.new(
-            :filename => request.env['HTTP_X_FILE_NAME'],
-            :tempfile => file,
-            :type => request.env['CONTENT_TYPE'],
-            :head => request.headers # Not really needed
+          :filename => request.env['HTTP_X_FILE_NAME'],
+          :tempfile => file,
+          :type     => request.env['CONTENT_TYPE'],
+          :head     => request.headers # Not really needed
         )
-        
         @file = @site.files.create!(
           (params[:file] || { }).merge(:file => upload)
         )
