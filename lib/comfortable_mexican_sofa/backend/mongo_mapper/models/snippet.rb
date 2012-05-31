@@ -71,7 +71,11 @@ class Cms::Orm::MongoMapper::Snippet
 
       # This will stop sync_mirror being called in the after_save callback for this instance.
       snippet.is_mirrored = true
-      snippet.save
+      begin
+        snippet.save!
+      rescue MongoMapper::DocumentNotValid => boom
+        logger.detailed_error(boom)
+      end
     end
   end
 

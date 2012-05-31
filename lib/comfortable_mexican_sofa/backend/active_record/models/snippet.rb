@@ -69,7 +69,11 @@ class Cms::Orm::ActiveRecord::Snippet < ActiveRecord::Base
 
       # This will stop sync_mirror being called in the after_save callback for this instance.
       snippet.is_mirrored = true
-      snippet.save
+      begin
+        snippet.save!
+      rescue ActiveRecord::RecordInvalid => boom
+        logger.detailed_error(boom)
+      end
     end
   end
 

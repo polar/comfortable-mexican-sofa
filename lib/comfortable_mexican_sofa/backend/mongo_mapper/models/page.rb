@@ -97,7 +97,7 @@ class Cms::Orm::MongoMapper::Page
       page = site.pages.find_by_full_path(self.full_path_was || self.full_path) || site.pages.build
 
       parent = site.pages.find_by_full_path(self.parent.try(:full_path))
-      layout = site.layouts.find_by_identifier(self.layout.identifier)
+      layout = site.layouts.find_by_identifier(self.layout.try(:identifier))
 
       # Need to use :parent with MongoMapper, as before save doesn't sync up assignment on :parent_id before before_save callbacks.
       page.attributes = {
@@ -108,7 +108,11 @@ class Cms::Orm::MongoMapper::Page
       }
 
       page.is_mirrored = true
-      page.save
+      begin
+        page.save!
+      rescue MongoMapper::DocumentNotValid => boom
+        logger.detailed_error(boom)
+      end
     end
   end
 

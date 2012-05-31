@@ -91,7 +91,11 @@ class Cms::Orm::ActiveRecord::Layout < ActiveRecord::Base
       }
 
       layout.is_mirrored = true
-      layout.save
+      begin
+        layout.save!
+      rescue ActiveRecord::RecordInvalid => boom
+        logger.detailed_error(boom)
+      end
     end
   end
 

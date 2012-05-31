@@ -76,7 +76,11 @@ class Cms::Orm::MongoMapper::Layout
       }
 
       layout.is_mirrored = true
-      layout.save
+      begin
+        layout.save!
+      rescue MongoMapper::DocumentNotValid => boom
+        logger.detailed_error(boom)
+      end
     end
   end
 
