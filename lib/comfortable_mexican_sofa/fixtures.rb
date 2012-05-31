@@ -91,7 +91,8 @@ module ComfortableMexicanSofa::Fixtures
       slug = path.split('/').last
       page = if parent
         # Since children is gotten from a plugin here, and it needs STI we need to set its type.
-        parent.children.find_by_slug(slug) || parent.children.build(:slug => slug, :site => site, :type => "Cms::Page")
+        # parent.children.find_by_slug(slug) || parent.children.build(:slug => slug, :site => site, :type => "Cms::Page")
+        parent.children.find_by_slug(slug) || site.pages.build(:parent => parent, :slug => slug)
       else
         site.pages.root || site.pages.build(:slug => slug)
       end

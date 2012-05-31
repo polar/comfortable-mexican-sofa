@@ -16,8 +16,7 @@ class CmsBlockTest < ActiveSupport::TestCase
   
   def test_creation_via_page_nested_attributes
     assert_difference ['Cms::Page.count', 'Cms::Block.count'] do
-      page = Cms::Page.create!(
-        :site       => cms_sites(:default),
+      page = cms_sites(:default).pages.create!(
         :layout     => cms_layouts(:default),
         :label      => 'test page',
         :slug       => 'test_page',
@@ -38,8 +37,7 @@ class CmsBlockTest < ActiveSupport::TestCase
 
   def test_creation_via_page_nested_attributes_as_hash
     assert_difference ['Cms::Page.count', 'Cms::Block.count'] do
-      page = Cms::Page.create!(
-        :site       => cms_sites(:default),
+      page = cms_sites(:default).pages.create!(
         :layout     => cms_layouts(:default),
         :label      => 'test page',
         :slug       => 'test_page',
@@ -60,8 +58,7 @@ class CmsBlockTest < ActiveSupport::TestCase
 
   def test_creation_via_page_nested_attributes_as_hash_with_duplicates
     assert_difference ['Cms::Page.count', 'Cms::Block.count'] do
-      page = Cms::Page.create!(
-        :site       => cms_sites(:default),
+      page = cms_sites(:default).pages.create!(
         :layout     => cms_layouts(:default),
         :label      => 'test page',
         :slug       => 'test_page',
@@ -91,8 +88,7 @@ class CmsBlockTest < ActiveSupport::TestCase
 
     page = nil
     assert_difference ['Cms::Page.count', 'Cms::Block.count', 'Cms::File.count'] do
-      page = Cms::Page.create!(
-        :site       => cms_sites(:default),
+      page = cms_sites(:default).pages.create!(
         :layout     => layout,
         :label      => 'test page',
         :slug       => 'test_page',
@@ -139,8 +135,7 @@ class CmsBlockTest < ActiveSupport::TestCase
     page = nil
     assert_difference ['Cms::Page.count', 'Cms::Block.count'] do
       assert_difference 'Cms::File.count', 2 do
-        page = Cms::Page.create!(
-          :site       => cms_sites(:default),
+        page = cms_sites(:default).pages.create!(
           :layout     => layout,
           :label      => 'test page',
           :slug       => 'test_page',
@@ -182,8 +177,7 @@ class CmsBlockTest < ActiveSupport::TestCase
     
     assert_difference 'Cms::Page.count' do
       assert_difference 'Cms::Block.count', 3 do
-        page = Cms::Page.create!(
-          :site       => cms_sites(:default),
+        page = cms_sites(:default).pages.create!(
           :layout     => layout,
           :label      => 'test page',
           :slug       => 'test_page',
