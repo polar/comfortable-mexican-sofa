@@ -8,6 +8,7 @@ class CmsAdmin::SitesController < CmsAdmin::BaseController
 
   def index
     return redirect_to new_cms_admin_site_path if Cms::Site.count == 0
+    @site = Cms::Site.find_by_id(session[:site_id])
     @sites = Cms::Site.all
   end
 
