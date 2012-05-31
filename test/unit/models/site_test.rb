@@ -96,8 +96,6 @@ class CmsSiteTest < ActiveSupport::TestCase
   end
   
   def test_find_site
-    # There are two sites in the fixtures. Get rid of one.
-    cms_sites(:with_path).destroy
 
     site_a = cms_sites(:default)
     assert_equal 'test.host', site_a.hostname

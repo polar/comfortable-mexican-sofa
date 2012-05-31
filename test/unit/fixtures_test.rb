@@ -275,9 +275,7 @@ class FixturesTest < ActiveSupport::TestCase
   end
   
   def test_import_all_with_no_site
-    # There are 2 sites in the fixtures.
     cms_sites(:default).destroy
-    cms_sites(:with_path).destroy
     
     assert_difference 'Cms::Site.count', 1 do
       assert_difference 'Cms::Layout.count', 2 do

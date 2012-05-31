@@ -62,7 +62,7 @@ class CmsFileTest < ActiveSupport::TestCase
     assert_no_difference 'Cms::File.count' do
       begin
         # Paperclip throws an error here for no handler for file
-        cms_sites(:default).files.create(:file => '' )
+        cms_sites(:default).files.create
       rescue
       end
     end

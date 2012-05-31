@@ -7,10 +7,3 @@ Cms::Site.blueprint(:default) do
   identifier { "default-site" }
   hostname { "test.host" }
 end
-
-Cms::Site.blueprint(:with_path) do
-  label { "With Path Site" }
-  identifier { "with-path-site" }
-  hostname { "test.host" }
-  path { "en/site" }
-end

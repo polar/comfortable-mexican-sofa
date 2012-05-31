@@ -19,8 +19,6 @@ class SitesTest < ActionDispatch::IntegrationTest
   end
   
   def test_get_public_page_with_single_site
-    # There are two sites in the fixtures.
-    cms_sites(:with_path).destroy
 
     host! 'bogus.host'
     get '/'

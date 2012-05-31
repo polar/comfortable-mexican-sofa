@@ -178,8 +178,6 @@ class CmsContentControllerTest < ActionController::TestCase
   end
   
   def test_render_sitemap_with_path_invalid_with_single_site
-    # There are two sites in the fixtures.
-    cms_sites(:with_path).destroy
 
     site = cms_sites(:default)
     site.update_attribute(:path, 'en')

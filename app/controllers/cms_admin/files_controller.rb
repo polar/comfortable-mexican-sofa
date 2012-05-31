@@ -54,6 +54,7 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
             :type => request.env['CONTENT_TYPE'],
             :head => request.headers # Not really needed
         )
+        
         @file = @site.files.create!(
           (params[:file] || { }).merge(:file => upload)
         )
