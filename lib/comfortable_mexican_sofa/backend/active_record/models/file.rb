@@ -60,11 +60,11 @@ class Cms::Orm::ActiveRecord::File < ActiveRecord::Base
     self.position = max ? max + 1 : 0
   end
 
-  # FIX: Terrible, but no way of creating cached page content overwise
+  # FIX: Terrible, but no way of creating cached page content otherwise
   def reload_page_cache
     return unless self.block
     p = self.block.page
-    # TODO: This causes a save on the page, which calls a save on a File Block
+    # TODO: Analyze this. p.save causes a save on the page, which calls a save on a File Block
     # which causes a save on the page, etc.
     Cms::Page.where(:id => p.id).all.each do |p|
       #p.update_attributes(:content_cache => p.content(true))

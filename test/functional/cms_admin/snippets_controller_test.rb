@@ -13,7 +13,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
     Cms::Snippet.delete_all
     get :index, :site_id => cms_sites(:default)
     assert_response :redirect
-    assert_redirected_to :action => :new
+    assert_redirected_to new_cms_admin_site_snippet_path(cms_sites(:default))
   end
   
   def test_get_index_with_category
@@ -56,7 +56,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
   def test_get_edit_failure
     get :edit, :site_id => cms_sites(:default), :id => 'not_found'
     assert_response :redirect
-    assert_redirected_to :action => :index
+    assert_redirected_to cms_admin_site_snippets_path(cms_sites(:default))
     assert_equal 'Snippet not found', flash[:error]
   end
   
@@ -70,7 +70,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
       assert_response :redirect
       snippet = Cms::Snippet.order(:created_at).last
       assert_equal cms_sites(:default), snippet.site
-      assert_redirected_to :action => :edit, :id => snippet
+      assert_redirected_to edit_cms_admin_site_snippet_path(cms_sites(:default), snippet)
       assert_equal 'Snippet created', flash[:notice]
     end
   end
@@ -91,7 +91,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
       :content  => 'New Content'
     }
     assert_response :redirect
-    assert_redirected_to :action => :edit, :site_id => snippet.site, :id => snippet
+    assert_redirected_to edit_cms_admin_site_snippet_path(snippet.site, snippet)
     assert_equal 'Snippet updated', flash[:notice]
     snippet.reload
     assert_equal 'New-Snippet', snippet.label
@@ -114,7 +114,7 @@ class CmsAdmin::SnippetsControllerTest < ActionController::TestCase
     assert_difference 'Cms::Snippet.count', -1 do
       delete :destroy, :site_id => cms_sites(:default), :id => cms_snippets(:default)
       assert_response :redirect
-      assert_redirected_to :action => :index
+      assert_redirected_to cms_admin_site_snippets_path(cms_sites(:default))
       assert_equal 'Snippet deleted', flash[:notice]
     end
   end

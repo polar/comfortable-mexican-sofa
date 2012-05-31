@@ -15,6 +15,7 @@ end
   'comfortable_mexican_sofa/tag',
   'comfortable_mexican_sofa/sitemap',
   'comfortable_mexican_sofa/fixtures',
+  'comfortable_mexican_sofa/engine',
   'comfortable_mexican_sofa/extensions/rails'
 ].each do |path|
   require File.expand_path(path, File.dirname(__FILE__))

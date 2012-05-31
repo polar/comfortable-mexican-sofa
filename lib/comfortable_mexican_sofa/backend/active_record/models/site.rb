@@ -4,6 +4,9 @@ class Cms::Orm::ActiveRecord::Site < ActiveRecord::Base
   ComfortableMexicanSofa.establish_connection(self)
   
   self.table_name = 'cms_sites'
+  def self.to_model
+    "cms_admin_file"
+  end
 
   attr_accessible :label, :identifier, :hostname, :path, :locale, :is_mirrored
 
@@ -54,6 +57,8 @@ class Cms::Orm::ActiveRecord::Site < ActiveRecord::Base
   # returning the Cms::Site instance based on host and path
   def self.find_site(host, path = nil)
     return Cms::Site.first if Cms::Site.count == 1
+    # TODO: Do we have to unescape here?
+    path = path.squeeze("/") unless path.nil?
     cms_site = nil
     Cms::Site.find_all_by_hostname(real_host_from_aliases(host)).each do |site|
       if site.path.blank?

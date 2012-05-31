@@ -1,7 +1,7 @@
 require File.expand_path('../../test_helper', File.dirname(__FILE__))
 
 class CmsAdmin::FilesControllerTest < ActionController::TestCase
-  
+
   def test_get_index
     get :index, :site_id => cms_sites(:default)
     assert_response :success
@@ -13,7 +13,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
     Cms::File.delete_all
     get :index, :site_id => cms_sites(:default)
     assert_response :redirect
-    assert_redirected_to :action => :new
+    assert_redirected_to new_cms_admin_site_file_path(:site_id => cms_sites(:default))
   end
   
   def test_get_index_with_category
@@ -52,7 +52,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
   def test_get_edit_failure
     get :edit, :site_id => cms_sites(:default), :id => 'not_found'
     assert_response :redirect
-    assert_redirected_to :action => :index
+    assert_redirected_to cms_admin_site_files_path(:site_id => cms_sites(:default))
     assert_equal 'File not found', flash[:error]
   end
   
@@ -70,7 +70,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
       assert_equal cms_sites(:default), file.site
       assert_equal 'Test File', file.label
       assert_equal 'Test Description', file.description
-      assert_redirected_to :action => :edit, :id => file
+      assert_redirected_to edit_cms_admin_site_file_path(file, :site_id => cms_sites(:default))
       assert_equal 'Files uploaded', flash[:notice]
     end
   end
@@ -98,6 +98,8 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
       }
       assert_response :redirect
       file_a, file_b = Cms::File.all
+      assert file_a
+      assert file_b
       assert_equal cms_sites(:default), file_a.site
       
       assert_equal 'image.jpg', file_a.file_file_name
@@ -107,7 +109,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
       assert_equal 'Test Description', file_a.description
       assert_equal 'Test Description', file_b.description
       
-      assert_redirected_to :action => :edit, :id => file_b
+      assert_redirected_to edit_cms_admin_site_file_path(file_b, :site_id => cms_sites(:default).id)
       assert_equal 'Files uploaded', flash[:notice]
     end
   end
@@ -136,7 +138,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
       :description  => 'New Description'
     }
     assert_response :redirect
-    assert_redirected_to :action => :edit, :site_id => file.site, :id => file
+    assert_redirected_to edit_cms_admin_site_file_path(file, :site_id => file.site.id)
     assert_equal 'File updated', flash[:notice]
     file.reload
     assert_equal 'New File', file.label
@@ -159,7 +161,7 @@ class CmsAdmin::FilesControllerTest < ActionController::TestCase
     assert_difference 'Cms::File.count', -1 do
       delete :destroy, :site_id => cms_sites(:default), :id => cms_files(:default)
       assert_response :redirect
-      assert_redirected_to :action => :index
+      assert_redirected_to cms_admin_site_files_path(:site_id => cms_sites(:default).id)
       assert_equal 'File deleted', flash[:notice]
     end
   end

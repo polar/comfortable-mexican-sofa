@@ -7,7 +7,7 @@ class CmsAdmin::SitesController < CmsAdmin::BaseController
   before_filter :load_site,   :only => [:edit, :update, :destroy]
 
   def index
-    return redirect_to :action => :new if Cms::Site.count == 0
+    return redirect_to new_cms_admin_site_path if Cms::Site.count == 0
     @sites = Cms::Site.all
   end
 
@@ -32,7 +32,7 @@ class CmsAdmin::SitesController < CmsAdmin::BaseController
   def update
     @site.update_attributes!(params[:site])
     flash[:notice] = I18n.t('cms.sites.updated')
-    redirect_to :action => :edit, :id => @site
+    redirect_to edit_cms_admin_site_path(@site)
   rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.sites.update_failure')
@@ -42,7 +42,7 @@ class CmsAdmin::SitesController < CmsAdmin::BaseController
   def destroy
     @site.destroy
     flash[:notice] = I18n.t('cms.sites.deleted')
-    redirect_to :action => :index
+    redirect_to cms_admin_sites_path
   end
 
 protected
@@ -58,7 +58,7 @@ protected
     I18n.locale = ComfortableMexicanSofa.config.admin_locale || @site.locale
   rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.sites.not_found')
-    redirect_to :action => :index
+    redirect_to cms_admin_sites_path
   end
 
 end

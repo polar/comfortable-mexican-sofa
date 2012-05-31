@@ -9,7 +9,7 @@
   
   <div class='categories read'>
     <div class='category all <%= (params[:category].blank?? 'active' : nil ) %>'>
-      <%= link_to t('.all'), :category => nil %>
+      <%= link_to t('.all'), cms_admin_site_categories_path(@site) %>
     </div>
     <% @site.categories.of_type(type).each do |category| %>
       <%= render :partial => 'cms_admin/categories/show', :object => category, :locals => { :read => true } %>

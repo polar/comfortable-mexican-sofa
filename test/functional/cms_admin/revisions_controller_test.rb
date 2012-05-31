@@ -5,26 +5,26 @@ class CmsAdmin::RevisionsControllerTest < ActionController::TestCase
   def test_get_index_for_layouts
     get :index, :site_id => cms_sites(:default), :layout_id => cms_layouts(:default)
     assert_response :redirect
-    assert_redirected_to :action => :show, :id => cms_revisions(:layout)
+    assert_redirected_to cms_admin_site_layout_revision_path(:id => cms_revisions(:layout), :layout_id => cms_layouts(:default), :site_id => cms_sites(:default))
   end
   
   def test_get_index_for_pages
     get :index, :site_id => cms_sites(:default), :page_id => cms_pages(:default)
     assert_response :redirect
-    assert_redirected_to :action => :show, :id => cms_revisions(:page)
+    assert_redirected_to cms_admin_site_page_revision_path(:id => cms_revisions(:page), :page_id => cms_pages(:default), :site_id => cms_sites(:default))
   end
   
   def test_get_index_for_snippets
     get :index, :site_id => cms_sites(:default), :snippet_id => cms_snippets(:default)
     assert_response :redirect
-    assert_redirected_to :action => :show, :id => cms_revisions(:snippet)
+    assert_redirected_to cms_admin_site_snippet_revision_path(:id => cms_revisions(:snippet), :snippet_id => cms_snippets(:default), :site_id => cms_sites(:default))
   end
   
   def test_get_index_for_snippets_with_no_revisions
     Cms::Revision.delete_all
     get :index, :site_id => cms_sites(:default), :snippet_id => cms_snippets(:default)
     assert_response :redirect
-    assert_redirected_to :action => :show, :id => 0
+    assert_redirected_to cms_admin_site_snippet_revision_path(:id => 0, :snippet_id => cms_snippets(:default), :site_id => cms_sites(:default))
   end
   
   def test_get_show_for_layout

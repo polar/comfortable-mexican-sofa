@@ -4,7 +4,7 @@ class CmsAdmin::LayoutsController < CmsAdmin::BaseController
   before_filter :load_layout,   :only => [:edit, :update, :destroy]
 
   def index
-    return redirect_to :action => :new if @site.layouts.count == 0
+    return redirect_to new_cms_admin_site_layout_path(@site) if @site.layouts.count == 0
     @layouts = @site.layouts.roots.all
   end
 
@@ -19,7 +19,7 @@ class CmsAdmin::LayoutsController < CmsAdmin::BaseController
   def create
     @layout.save!
     flash[:notice] = I18n.t('cms.layouts.created')
-    redirect_to :action => :edit, :id => @layout
+    redirect_to edit_cms_admin_site_layout_path(@site, @layout)
   rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.layouts.creation_failure')
@@ -29,7 +29,7 @@ class CmsAdmin::LayoutsController < CmsAdmin::BaseController
   def update
     @layout.update_attributes!(params[:layout])
     flash[:notice] = I18n.t('cms.layouts.updated')
-    redirect_to :action => :edit, :id => @layout
+    redirect_to edit_cms_admin_site_layout_path(@site, @layout)
   rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.layouts.update_failure')
@@ -39,7 +39,7 @@ class CmsAdmin::LayoutsController < CmsAdmin::BaseController
   def destroy
     @layout.destroy
     flash[:notice] = I18n.t('cms.layouts.deleted')
-    redirect_to :action => :index
+    redirect_to cms_admin_site_layouts_path(@site)
   end
   
   def reorder
@@ -64,7 +64,7 @@ protected
     raise ComfortableMexicanSofa.ModelNotFound if @layout.nil?
   rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.layouts.not_found')
-    redirect_to :action => :index
+    redirect_to cms_admin_site_layouts_path(@site)
   end
 
 end

@@ -13,7 +13,7 @@ class CmsAdmin::LayoutsControllerTest < ActionController::TestCase
     Cms::Layout.delete_all
     get :index, :site_id => cms_sites(:default) 
     assert_response :redirect
-    assert_redirected_to :action => :new
+    assert_redirected_to new_cms_admin_site_layout_path(:site_id => cms_sites(:default).id)
   end
 
   def test_get_new
@@ -39,7 +39,7 @@ class CmsAdmin::LayoutsControllerTest < ActionController::TestCase
   def test_get_edit_failure
     get :edit, :site_id => cms_sites(:default), :id => 'not_found'
     assert_response :redirect
-    assert_redirected_to :action => :index
+    assert_redirected_to cms_admin_site_layouts_path(:site_id => cms_sites(:default).id)
     assert_equal 'Layout not found', flash[:error]
   end
   
@@ -55,7 +55,7 @@ class CmsAdmin::LayoutsControllerTest < ActionController::TestCase
       #layout = Cms::Layout.last
       layout = Cms::Layout.order(:created_at).all.last
       assert_equal cms_sites(:default), layout.site
-      assert_redirected_to :action => :edit, :site_id => layout.site, :id => layout
+      assert_redirected_to edit_cms_admin_site_layout_path(layout, :site_id => layout.site.id)
       assert_equal 'Layout created', flash[:notice]
     end
   end
@@ -76,7 +76,7 @@ class CmsAdmin::LayoutsControllerTest < ActionController::TestCase
       :content  => 'New {{cms:page:content}}'
     }
     assert_response :redirect
-    assert_redirected_to :action => :edit, :site_id => layout.site, :id => layout
+    assert_redirected_to edit_cms_admin_site_layout_path(layout, :site_id => layout.site.id)
     assert_equal 'Layout updated', flash[:notice]
     layout.reload
     assert_equal 'New Label', layout.label
@@ -99,7 +99,7 @@ class CmsAdmin::LayoutsControllerTest < ActionController::TestCase
     assert_difference 'Cms::Layout.count', -1 do
       delete :destroy, :site_id => cms_sites(:default), :id => cms_layouts(:default)
       assert_response :redirect
-      assert_redirected_to :action => :index
+      assert_redirected_to cms_admin_site_layouts_path(:site_id => cms_sites(:default).id)
       assert_equal 'Layout deleted', flash[:notice]
     end
   end

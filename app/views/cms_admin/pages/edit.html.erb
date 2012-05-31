@@ -6,6 +6,6 @@
   <%= render :partial => 'cms_admin/sites/mirrors', :object => @page %>
 <% end %>
 
-<%= comfy_form_for @page, :as => :page, :url => {:action => :update}, :html => {:multipart => true} do |form| %>
+<%= comfy_form_for @page, :as => :page, :url => cms_admin_site_page_path(@page, :site_id => @site.id), :html => {:multipart => true} do |form| %>
   <%= render :partial => 'form', :object => form %>
 <% end %>

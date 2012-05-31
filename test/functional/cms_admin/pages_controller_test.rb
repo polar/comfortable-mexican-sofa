@@ -13,7 +13,7 @@ class CmsAdmin::PagesControllerTest < ActionController::TestCase
     Cms::Page.delete_all
     get :index, :site_id => cms_sites(:default)
     assert_response :redirect
-    assert_redirected_to :action => :new
+    assert_redirected_to cms_admin_site_pages_path(:site_id => cms_sites(:default).id)
   end
   
   def test_get_index_with_category
@@ -202,7 +202,7 @@ class CmsAdmin::PagesControllerTest < ActionController::TestCase
   def test_get_edit_failure
     get :edit, :site_id => cms_sites(:default), :id => 'not_found'
     assert_response :redirect
-    assert_redirected_to :action => :index
+    assert_redirected_to cms_admin_site_pages_path(:site_id => cms_sites(:default).id)
     assert_equal 'Page not found', flash[:error]
   end
 
@@ -235,7 +235,7 @@ class CmsAdmin::PagesControllerTest < ActionController::TestCase
         #page = Cms::Page.last
         page = Cms::Page.order(:created_at).all.last
         assert_equal cms_sites(:default), page.site
-        assert_redirected_to :action => :edit, :id => page
+        assert_redirected_to edit_cms_admin_site_page_path(page, :site_id => page.site.id)
         assert_equal 'Page created', flash[:notice]
       end
     end
@@ -269,7 +269,7 @@ class CmsAdmin::PagesControllerTest < ActionController::TestCase
       }
       page.reload
       assert_response :redirect
-      assert_redirected_to :action => :edit, :id => page
+      assert_redirected_to edit_cms_admin_site_page_path(page, :site_id => page.site.id)
       assert_equal 'Page updated', flash[:notice]
       assert_equal 'Updated Label', page.label
     end
@@ -290,7 +290,7 @@ class CmsAdmin::PagesControllerTest < ActionController::TestCase
       }
       page.reload
       assert_response :redirect
-      assert_redirected_to :action => :edit, :id => page
+      assert_redirected_to edit_cms_admin_site_page_path(page, :site_id => page.site.id)
       assert_equal 'Page updated', flash[:notice]
       assert_equal 'Updated Label', page.label
       assert page.blocks.collect{|b| ['content', 'default_field_text', 'default_page_text', 'header'].include?(b.identifier)}
@@ -315,7 +315,7 @@ class CmsAdmin::PagesControllerTest < ActionController::TestCase
       assert_difference 'Cms::Block.count', -3 do
         delete :destroy, :site_id => cms_sites(:default), :id => cms_pages(:default)
         assert_response :redirect
-        assert_redirected_to :action => :index
+        assert_redirected_to cms_admin_site_pages_path(:site_id => cms_sites(:default).id)
         assert_equal 'Page deleted', flash[:notice]
       end
     end

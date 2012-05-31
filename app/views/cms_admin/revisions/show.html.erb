@@ -5,12 +5,12 @@
   <h2><%= pluralize(@record.revisions.count, t('.revision')) %></h2>
   <div class='revisions box'>
     <% @record.revisions.each do |revision| %>
-      <%= active_link_to revision.created_at, :id => revision.id %>
+      <%= active_link_to revision.created_at, revision_path_to(revision.id) %>
     <% end %>
   </div>
 <% end %>
 
-<%= comfy_form_for @revision, :url => {:action => :revert} do |form| %>
+<%= comfy_form_for @revision, :url => revert_revision_path do |form| %>
   <%= form.simple_field do %>
     <div class='current'>
       <div class='title'><%= t('.current') %></div>

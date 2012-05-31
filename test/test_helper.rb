@@ -112,7 +112,11 @@ class ActiveSupport::TestCase
 end
 
 class ActionController::TestCase
+  include ComfortableMexicanSofa::Engine.routes.url_helpers
   def setup
+    # Setting up the RouteSet here to be the engine's RouteSet' is imperative here, Otherwise the tests
+    # get the outer RouteSet and the request.full_path is not created correctly for each "get".
+    @routes = ComfortableMexicanSofa::Engine.routes
     @request.env['HTTP_AUTHORIZATION'] = "Basic #{Base64.encode64('username:password')}"
     DatabaseCleaner.clean
     setup_blueprints
@@ -121,8 +125,10 @@ class ActionController::TestCase
 end
 
 class ActionDispatch::IntegrationTest
+  include ComfortableMexicanSofa::Engine.routes.url_helpers
   
   def setup
+    @routes = ComfortableMexicanSofa::Engine.routes
     DatabaseCleaner.clean
     setup_blueprints
     host! 'test.host'

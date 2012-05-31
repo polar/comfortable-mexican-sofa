@@ -1,4 +1,4 @@
-Rails.application.routes.draw do
+ComfortableMexicanSofa::Engine.routes.draw do
 
   namespace :cms_admin, :path => ComfortableMexicanSofa.config.admin_route_prefix, :except => :show do
     get '/', :to => 'base#jump'
@@ -44,5 +44,12 @@ Rails.application.routes.draw do
     
     get '/' => :render_html,  :as => 'cms_html',  :path => "(*cms_path)"
   end
-  
-end if ComfortableMexicanSofa.config.use_default_routes
+
+end
+
+# TODO: This should go somewhere else.
+if defined? ComfortableMexicanSofa::Application
+  Rails.application.routes.draw do
+    mount ComfortableMexicanSofa::Engine, :at => "/"  if ComfortableMexicanSofa.config.use_default_routes
+  end
+end

@@ -13,7 +13,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
     Cms::Site.delete_all
     get :index
     assert_response :redirect
-    assert_redirected_to :action => :new
+    assert_redirected_to new_cms_admin_site_path
   end
 
   def test_get_new
@@ -37,7 +37,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   def test_get_edit_failure
     get :edit, :id => 'not_found'
     assert_response :redirect
-    assert_redirected_to :action => :index
+    assert_redirected_to cms_admin_sites_path
     assert_equal 'Site not found', flash[:error]
   end
   
@@ -75,7 +75,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
       :hostname => 'new.site.local'
     }
     assert_response :redirect
-    assert_redirected_to :action => :edit, :id => site
+    assert_redirected_to edit_cms_admin_site_path(site)
     assert_equal 'Site updated', flash[:notice]
     site.reload
     assert_equal 'New Site', site.label
@@ -98,7 +98,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
     assert_difference 'Cms::Site.count', -1 do
       delete :destroy, :id => cms_sites(:default)
       assert_response :redirect
-      assert_redirected_to :action => :index
+      assert_redirected_to cms_admin_sites_path
       assert_equal 'Site deleted', flash[:notice]
     end
   end

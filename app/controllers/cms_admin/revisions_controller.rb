@@ -1,10 +1,12 @@
 class CmsAdmin::RevisionsController < CmsAdmin::BaseController
-  
+  helper_method :revision_path_to, :revert_revision_path
+
   before_filter :load_record
   before_filter :load_revision, :except => :index
   
   def index
-    redirect_to :action => :show, :id => @record.revisions.first.try(:id) || 0
+    @revision_id = @record.revisions.first.try(:id) || 0
+    redirect_to_show_record_revision
   end
   
   def show
@@ -21,11 +23,34 @@ class CmsAdmin::RevisionsController < CmsAdmin::BaseController
   def revert
     @record.restore_from_revision(@revision)
     flash[:notice] = I18n.t('cms.revisions.reverted')
-    redirect_to_record
+    redirect_to_edit_record
   end
   
 protected
-  
+
+  def revision_path_to(id)
+    case @record
+      when Cms::Layout then
+        cms_admin_site_layout_revision_path(@site, @record, id)
+      when Cms::Page then
+        cms_admin_site_page_revision_path(@site, @record, id)
+      when Cms::Snippet then
+        cms_admin_site_snippet_revision_path(@site, @record, id)
+    end
+
+  end
+
+  def revert_revision_path
+    case @record
+      when Cms::Layout then
+        revert_cms_admin_site_layout_revision_path(@site, @record, @revision)
+      when Cms::Page then
+        revert_cms_admin_site_page_revision_path(@site, @record, @revision)
+      when Cms::Snippet then
+        revert_cms_admin_site_snippet_revision_path(@site, @record, @revision)
+    end
+  end
+
   def load_record
     @record = if params[:layout_id]
       Cms::Layout.find(params[:layout_id])
@@ -45,15 +70,23 @@ protected
     raise  ComfortableMexicanSofa.ModelNotFound if @revision.nil?
   rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.revisions.not_found')
-    redirect_to_record
+    redirect_to_edit_record
   end
-  
-  def redirect_to_record
+
+  def redirect_to_edit_record
     redirect_to case @record
-      when Cms::Layout  then edit_cms_admin_site_layout_path(@site, @record)
-      when Cms::Page    then edit_cms_admin_site_page_path(@site, @record)
-      when Cms::Snippet then edit_cms_admin_site_snippet_path(@site, @record)
-    end
+                  when Cms::Layout  then edit_cms_admin_site_layout_path(@site, @record)
+                  when Cms::Page    then edit_cms_admin_site_page_path(@site, @record)
+                  when Cms::Snippet then edit_cms_admin_site_snippet_path(@site, @record)
+                end
+  end
+
+  def redirect_to_show_record_revision
+    redirect_to case @record
+                  when Cms::Layout  then cms_admin_site_layout_revision_path(@site, @record, @revision_id)
+                  when Cms::Page    then cms_admin_site_page_revision_path(@site, @record, @revision_id)
+                  when Cms::Snippet then cms_admin_site_snippet_revision_path(@site, @record, @revision_id)
+                end
   end
   
 end

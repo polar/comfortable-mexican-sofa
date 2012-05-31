@@ -90,8 +90,8 @@ class Cms::Orm::MongoMapper::File
   def reload_page_cache
     return unless self.block
     p = self.block.page
-    # TODO: This causes a save on the page, which calls a save on a File Block
-    # which causes a save on the page, etc.
+    # TODO: Analyze this. P.save causes a save on the page, which calls a save on a File Block
+    # which causes a save on the page, etc. Doesn't seem to happen in ActiveRecord
     Cms::Page.where(:id => p.id).all.each do |p|
       #p.update_attributes(:content_cache => p.content(true))
       p.content_dirty = true

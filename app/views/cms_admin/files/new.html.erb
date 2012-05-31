@@ -1,5 +1,5 @@
 <h1><%= t('.title') %></h1>
 
-<%= comfy_form_for @file, :as => :file, :url => {:action => :create}, :html => {:multipart => true} do |form| %>
+<%= comfy_form_for @file, :as => :file, :url => cms_admin_site_files_path(:site_id => @site.id), :html => {:multipart => true} do |form| %>
   <%= render :partial => 'form', :object => form %>
 <% end %>

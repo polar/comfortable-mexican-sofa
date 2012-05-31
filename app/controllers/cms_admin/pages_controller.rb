@@ -7,11 +7,8 @@ class CmsAdmin::PagesController < CmsAdmin::BaseController
   before_filter :build_file,        :only => [:new, :edit]
 
   def index
-    return redirect_to :action => :new if @site.pages.count == 0
+    return redirect_to cms_admin_site_pages_path(@site) if @site.pages.count == 0
     if params[:category].present?
-      # TODO: Fix for active record
-      #@pages = @site.pages.includes(:categories).for_category(params[:category]).all(:order => 'label')
-      #@pages = @site.pages.where(:categories => params[:category]).order(:label).all
       @pages = @site.pages.categorized(params[:category]).order(:label).all
     else
       @pages = [@site.pages.roots.first].compact
@@ -29,27 +26,27 @@ class CmsAdmin::PagesController < CmsAdmin::BaseController
   def create
     @page.save!
     flash[:notice] = I18n.t('cms.pages.created')
-    redirect_to :action => :edit, :id => @page
+    redirect_to edit_cms_admin_site_page_path(@site, @page)
   rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.pages.creation_failure')
-    render :action => :new
+    render :new
   end
 
   def update
     @page.save!
     flash[:notice] = I18n.t('cms.pages.updated')
-    redirect_to :action => :edit, :id => @page
+    redirect_to edit_cms_admin_site_page_path(@site, @page)
   rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.pages.update_failure')
-    render :action => :edit
+    render :edit
   end
 
   def destroy
     @page.destroy
     flash[:notice] = I18n.t('cms.pages.deleted')
-    redirect_to :action => :index
+    redirect_to cms_admin_site_pages_path(@site)
   end
 
   def form_blocks
@@ -102,7 +99,7 @@ protected
     @page.layout ||= (@page.parent && @page.parent.layout || @site.layouts.roots.first)
   rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.pages.not_found')
-    redirect_to :action => :index
+    redirect_to cms_admin_site_pages_path(@site, @page)
   end
 
   def preview_cms_page

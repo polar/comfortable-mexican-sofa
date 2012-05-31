@@ -5,9 +5,7 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
   before_filter :load_file, :only => [:edit, :update, :destroy]
   
   def index
-    return redirect_to :action => :new if @site.files.count == 0
-    #TODO: fix for ActiveRecord
-    #@files = @site.files.includes(:categories).for_category(params[:category]).all(:order => 'cms_files.position')
+    return redirect_to new_cms_admin_site_file_path(@site) if @site.files.count == 0
     @files = @site.files.categorized(params[:category]).order(:position).all
   end
   
@@ -31,7 +29,7 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
         end
         
         flash[:notice] = I18n.t('cms.files.created')
-        redirect_to :action => :edit, :id => @file
+        redirect_to edit_cms_admin_site_file_path(@site, @file)
       end
       format.js do
         # FIX: No idea why this cannot be simulated in the test
@@ -77,7 +75,7 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
   def update
     @file.update_attributes!(params[:file])
     flash[:notice] = I18n.t('cms.files.updated')
-    redirect_to :action => :edit, :id => @file
+    redirect_to edit_cms_admin_site_file_path(@site, @file)
   rescue ComfortableMexicanSofa.ModelInvalid
     logger.detailed_error($!)
     flash.now[:error] = I18n.t('cms.files.update_failure')
@@ -90,7 +88,7 @@ class CmsAdmin::FilesController < CmsAdmin::BaseController
       format.js
       format.html do
         flash[:notice] = I18n.t('cms.files.deleted')
-        redirect_to :action => :index
+        redirect_to cms_admin_site_files_path(@site)
       end
     end
   end
@@ -111,6 +109,6 @@ protected
     raise ComfortableMexicanSofa.ModelNotFound if @file.nil?
   rescue ComfortableMexicanSofa.ModelNotFound
     flash[:error] = I18n.t('cms.files.not_found')
-    redirect_to :action => :index
+    redirect_to cms_admin_site_files_path(@site)
   end
 end

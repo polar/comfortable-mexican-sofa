@@ -5,6 +5,6 @@
   <%= render :partial => 'cms_admin/sites/mirrors', :object => @snippet %>
 <% end %>
 
-<%= comfy_form_for @snippet, :as => :snippet, :url => {:action => :update} do |form| %>
+<%= comfy_form_for @snippet, :as => :snippet, :url => cms_admin_site_snippet_path(@site, @snippet) do |form| %>
   <%= render :partial => 'form', :object => form %>
 <% end %>
