@@ -98,7 +98,7 @@ ComfortableMexicanSofa.configure do |config|
   #   config.hostname_aliases = nil
 
   # Database Backend ORM. Select the ORM for the database. The default is active_record.
-   config.backend = :mongo_mapper
+  # config.backend = :mongo_mapper
   # config.backend = :active_record
 
   # Preview URL Helpers. When CMS is an engine, it does not have access to the
