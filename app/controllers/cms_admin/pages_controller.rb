@@ -7,7 +7,7 @@ class CmsAdmin::PagesController < CmsAdmin::BaseController
   before_filter :build_file,        :only => [:new, :edit]
 
   def index
-    return redirect_to cms_admin_site_pages_path(@site) if @site.pages.count == 0
+    return redirect_to new_cms_admin_site_page_path(@site) if @site.pages.count == 0
     if params[:category].present?
       @pages = @site.pages.categorized(params[:category]).order(:label).all
     else
@@ -104,11 +104,10 @@ protected
 
   def preview_cms_page
     if params[:preview]
-      layout = @page.layout.app_layout.blank?? false : @page.layout.app_layout
-      @cms_site   = @page.site
-      @cms_layout = @page.layout
-      @cms_page   = @page
-      render :inline => @page.content(true), :layout => layout
+      options = {}
+      options.merge!( :id => @page.id ) unless @page.new_record?
+      options.merge!( :page => params[:page] )
+      redirect_to cms_admin_site_preview_path(@site, options)
     end
   end
 end

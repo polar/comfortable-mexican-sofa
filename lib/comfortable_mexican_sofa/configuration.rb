@@ -75,7 +75,16 @@ class ComfortableMexicanSofa::Configuration
   # Default is nil (not used)
   attr_accessor :hostname_aliases
 
+  # Backend. This is the ORM that is CMS is using for its models. Currently supported is
+  # :active_record and :mongo_mapper. Default is :active_record.
   attr_accessor :backend
+
+  # Preview Helpers. When CMS is an engine, it does not have access to the
+  # url helpers that may be needed to render app_layout and any application defined tags,
+  # The value can be any String, Symbol, or Module or array of such
+  # that can be given to the "helper" method.
+  # Default is [Rails.application.routes.url_helpers, Rails.application.helpers]
+  attr_accessor :preview_helpers
 
   # Configuration defaults
   def initialize
@@ -105,7 +114,8 @@ class ComfortableMexicanSofa::Configuration
     @allowed_helpers      = nil
     @allowed_partials     = nil
     @hostname_aliases     = nil
-    @backend = "active_record"
+    @backend              = "active_record"
+    @preview_helpers      = [Rails.application.routes.url_helpers, Rails.application.helpers]
   end
   
 end

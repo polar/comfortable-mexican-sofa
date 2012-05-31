@@ -3,6 +3,7 @@ ComfortableMexicanSofa::Engine.routes.draw do
   namespace :cms_admin, :path => ComfortableMexicanSofa.config.admin_route_prefix, :except => :show do
     get '/', :to => 'base#jump'
     resources :sites do
+      get :preview, :controller => :preview
       resources :pages do
         get  :form_blocks,    :on => :member
         get  :toggle_branch,  :on => :member

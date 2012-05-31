@@ -98,8 +98,15 @@ ComfortableMexicanSofa.configure do |config|
   #   config.hostname_aliases = nil
 
   # Database Backend ORM. Select the ORM for the database. The default is active_record.
-  # config.backend = :mongo_mapper
+   config.backend = :mongo_mapper
   # config.backend = :active_record
+
+  # Preview URL Helpers. When CMS is an engine, it does not have access to the
+  # url helpers that may be needed to render app_layout and any application defined tags,
+  # The value can be any String, Symbol, or Module or array of such
+  # that can be given to the "helper" method.
+  # Default is [Rails.application.routes.url_helpers, Rails.application.helpers]
+  # config.preview_helpers = [Rails.application.routes.url_helpers, Rails.application.helpers]
 end
 
 # Default credentials for ComfortableMexicanSofa::HttpAuth

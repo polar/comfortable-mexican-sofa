@@ -1,7 +1,3 @@
-# Loading engine only if this is not a standalone installation
-unless defined? ComfortableMexicanSofa::Application
-  require File.expand_path('comfortable_mexican_sofa/engine', File.dirname(__FILE__))
-end
 
 [ 'comfortable_mexican_sofa/version',
   'comfortable_mexican_sofa/error',
@@ -64,6 +60,7 @@ module ComfortableMexicanSofa
       end
 
     end
+
     def ModelNotFound
       if @configuration.backend.to_s == "active_record"
         return ::ActiveRecord::RecordNotFound
