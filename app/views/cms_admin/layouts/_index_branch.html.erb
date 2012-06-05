@@ -21,7 +21,7 @@
   </div>
   <% if layout.children.present? %>
     <ul>
-      <%= render :partial => 'index_branch', :collection => layout.children %>
+      <%= render :partial => 'index_branch', :collection => layout.children.all %>
     </ul>
   <% end %>
 </li>

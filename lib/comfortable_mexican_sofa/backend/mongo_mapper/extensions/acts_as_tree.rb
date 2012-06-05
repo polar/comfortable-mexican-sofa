@@ -109,7 +109,7 @@ module ComfortableMexicanSofa::MongoMapper::ActsAsTree
     #
     #   subchild1.self_and_siblings # => [subchild1, subchild2]
     def self_and_siblings
-      parent ? parent.children : self.class.roots.all
+      parent ? parent.children.all : self.class.roots.all
     end
   end
 end
