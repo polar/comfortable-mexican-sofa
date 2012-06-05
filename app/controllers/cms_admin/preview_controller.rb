@@ -10,7 +10,12 @@ class CmsAdmin::PreviewController < CmsAdmin::BaseController
     @cms_site   = @page.site
     @cms_layout = @page.layout
     @cms_page   = @page
-    render :inline => @page.content(true), :layout => layout
+    begin
+      render :inline => @page.content(true), :layout => layout
+    rescue => boom
+      render :text => "Page cannot be previewed due to tags that need page context."
+    end
+
   end
 
   protected

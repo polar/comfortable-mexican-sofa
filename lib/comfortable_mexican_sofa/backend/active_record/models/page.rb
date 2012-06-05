@@ -186,6 +186,33 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
     end
   end
 
+  # This method renders the content of the page within the ActionView. It has access
+  # to all controller variables, routes, and helpers, which allows the tags to render
+  # in that context. You may render directly in an erb file like so:
+  #   <%= page.render(self, :status => 200) %>
+  # If the page layout has an app_layout content will be rendered in that layout.
+  # Note, that in this situation, if you set a layout in your controller, it will render
+  # this content within that layout. You should rendering the page with an empty layout.
+  #
+  def render(view, options)
+    self.tags = [] # resetting
+    if layout
+      app_layout = (layout.app_layout.blank? || view.request.xhr?) ? false : layout.app_layout
+
+      content = ComfortableMexicanSofa::Tag.render_in_view(
+          self,
+          view,
+          ComfortableMexicanSofa::Tag.sanitize_irb(layout.merged_content)
+      )
+      options.merge!({   :inline => content,
+                         :layout => "layouts/#{app_layout}"
+                     })
+      view.render options
+    else
+      ''
+    end
+  end
+
   def content=(value)
     self.content_cache = value
     self.content_dirty = false

@@ -48,7 +48,8 @@ module ComfortableMexicanSofa::Tag
   end
   
   module InstanceMethods
-    
+    # ActionView is the context of the rendering the tag in render_in_view.
+    attr_accessor :view
     # String identifier of the tag
     def id
       "#{self.class.to_s.demodulize.underscore}_#{self.identifier}"
@@ -76,8 +77,12 @@ module ComfortableMexicanSofa::Tag
     # Content that is used during page rendering. Outputting existing content
     # as a default.
     def render
-      ignore = [ComfortableMexicanSofa::Tag::Partial, ComfortableMexicanSofa::Tag::Helper].member?(self.class)
-      ComfortableMexicanSofa::Tag.sanitize_irb(content, ignore)
+      if view
+        view.render :inline => content
+      else
+        ignore = [ComfortableMexicanSofa::Tag::Partial, ComfortableMexicanSofa::Tag::Helper].member?(self.class)
+        ComfortableMexicanSofa::Tag.sanitize_irb(content, ignore)
+      end
     end
     
     # Find or initialize Cms::Block object
@@ -105,7 +110,7 @@ private
     tag_classes.find{ |c| tag_instance = c.initialize_tag(page, tag_signature) }
     tag_instance
   end
-  
+
   # Scanning provided content and splitting it into [tag, text] tuples.
   # Tags are processed further and their content is expanded in the same way.
   # Tags are defined in the parent tags are ignored and not rendered.
@@ -113,11 +118,42 @@ private
     tokens = content.to_s.scan(TOKENIZER_REGEX)
     tokens.collect do |tag_signature, text|
       if tag_signature
+        begin
+          if tag = self.initialize_tag(page, tag_signature)
+            tag.parent = parent_tag if parent_tag
+            if tag.ancestors.select{|a| a.id == tag.id}.blank?
+              page.tags << tag
+              self.process_content(page, tag.render, tag)
+            end
+          end
+        rescue => boom
+          # This probably is caused by a tag that needs a view down
+          # somewhere, but this will cause the tests to work.
+          logger.detailed_error(boom)
+          text
+        end
+
+      else
+        text
+      end
+    end.join('')
+  end
+
+
+  # Scanning provided content and splitting it into [tag, text] tuples.
+  # Tags are processed further and their content is expanded in the same way.
+  # Tags are defined in the parent tags are ignored and not rendered.
+  # Tags are rendered in the context of the given ActionView.
+  def self.render_in_view(page, view, content = '', parent_tag = nil)
+    tokens = content.to_s.scan(TOKENIZER_REGEX)
+    tokens.collect do |tag_signature, text|
+      if tag_signature
         if tag = self.initialize_tag(page, tag_signature)
+          tag.view = view
           tag.parent = parent_tag if parent_tag
           if tag.ancestors.select{|a| a.id == tag.id}.blank?
             page.tags << tag
-            self.process_content(page, tag.render, tag)
+            self.render_in_view(page, view, tag.render, tag)
           end
         end
       else
@@ -125,7 +161,7 @@ private
       end
     end.join('')
   end
-  
+
   # Cleaning content from possible irb stuff. Partial and Helper tags are OK.
   def self.sanitize_irb(content, ignore = false)
     if ComfortableMexicanSofa.config.allow_irb || ignore

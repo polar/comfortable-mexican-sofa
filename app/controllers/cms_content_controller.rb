@@ -1,5 +1,7 @@
 class CmsContentController < CmsBaseController
-  
+
+  helper ComfortableMexicanSofa.config.preview_helpers
+
   # Authentication module must have #authenticate method
   include ComfortableMexicanSofa.config.public_auth.to_s.constantize
   
