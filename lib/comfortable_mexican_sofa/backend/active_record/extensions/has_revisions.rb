@@ -24,7 +24,6 @@ module ComfortableMexicanSofa::ActiveRecord::HasRevisions
             where()
           end
         end
-
       end
       
       before_save :prepare_revision

@@ -21,6 +21,8 @@ class Cms::Orm::MongoMapper::Site
     def excluded(*ids)
       if (ids = [ids].flatten.compact).present?
         where(:id.nin => ids)
+      else
+        where()
       end
     end
   end
@@ -77,6 +79,8 @@ class Cms::Orm::MongoMapper::Site
     def excluded(*ids)
       if (ids = [ids].flatten.compact).present?
         where(:id.nin => ids)
+      else
+        where()
       end
     end
   end

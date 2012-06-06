@@ -16,8 +16,17 @@ module ComfortableMexicanSofa::MongoMapper::HasRevisions
         :class_name => "Cms::Revision",
         :as         => :record,
         :order      => :created_at.desc,
-        :dependent  => :destroy
-      
+        :dependent  => :destroy do
+
+        def excluded(*ids)
+          if (ids = [ids].flatten.compact).present?
+            where(:id.nin => ids)
+          else
+            where()
+          end
+        end
+      end
+
       before_save :prepare_revision
       after_save  :create_revision
       
