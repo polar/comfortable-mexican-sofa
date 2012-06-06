@@ -129,7 +129,7 @@ private
         rescue => boom
           # This probably is caused by a tag that needs a view down
           # somewhere, but this will cause the tests to work.
-          logger.detailed_error(boom)
+          ComfortableMexicanSofa.logger.detailed_error(boom)
           text
         end
 

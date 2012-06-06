@@ -94,7 +94,7 @@ class Cms::Orm::ActiveRecord::Layout < ActiveRecord::Base
       begin
         layout.save!
       rescue ActiveRecord::RecordInvalid => boom
-        logger.detailed_error(boom)
+        ComfortableMexcianSofa.logger.detailed_error(boom)
       end
     end
   end

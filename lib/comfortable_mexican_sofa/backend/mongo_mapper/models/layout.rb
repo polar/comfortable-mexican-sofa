@@ -79,7 +79,7 @@ class Cms::Orm::MongoMapper::Layout
       begin
         layout.save!
       rescue MongoMapper::DocumentNotValid => boom
-        logger.detailed_error(boom)
+        ComfortableMexcianSofa.logger.detailed_error(boom)
       end
     end
   end

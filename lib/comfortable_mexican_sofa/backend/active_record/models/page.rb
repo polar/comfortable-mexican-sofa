@@ -99,7 +99,7 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
       begin
         page.save!
       rescue ActiveRecord::RecordInvalid => boom
-        logger.detailed_error!(boom)
+        ComfortableMexcianSofa.logger.detailed_error(boom)
       end
 
     end

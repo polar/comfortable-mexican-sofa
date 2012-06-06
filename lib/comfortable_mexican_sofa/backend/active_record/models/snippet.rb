@@ -72,7 +72,7 @@ class Cms::Orm::ActiveRecord::Snippet < ActiveRecord::Base
       begin
         snippet.save!
       rescue ActiveRecord::RecordInvalid => boom
-        logger.detailed_error(boom)
+        ComfortableMexcianSofa.logger.detailed_error(boom)
       end
     end
   end
