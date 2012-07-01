@@ -78,7 +78,8 @@ module ComfortableMexicanSofa::Tag
     # as a default.
     def render
       if view
-        view.render :inline => content
+        # The content must be left to be expanded and left to render.
+        content
       else
         ignore = [ComfortableMexicanSofa::Tag::Partial, ComfortableMexicanSofa::Tag::Helper].member?(self.class)
         ComfortableMexicanSofa::Tag.sanitize_irb(content, ignore)
@@ -145,21 +146,7 @@ private
   # Tags are defined in the parent tags are ignored and not rendered.
   # Tags are rendered in the context of the given ActionView.
   def self.render_in_view(page, view, content = '', parent_tag = nil)
-    tokens = content.to_s.scan(TOKENIZER_REGEX)
-    tokens.collect do |tag_signature, text|
-      if tag_signature
-        if tag = self.initialize_tag(page, tag_signature)
-          tag.view = view
-          tag.parent = parent_tag if parent_tag
-          if tag.ancestors.select{|a| a.id == tag.id}.blank?
-            page.tags << tag
-            self.render_in_view(page, view, tag.render, tag)
-          end
-        end
-      else
-        text
-      end
-    end.join('')
+    view.render :inline => self.process_content(page, content, parent_tag)
   end
 
   # Cleaning content from possible irb stuff. Partial and Helper tags are OK.
