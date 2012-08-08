@@ -30,6 +30,7 @@ module ComfortableMexicanSofa::Fixtures
           layout.label      = attributes[:label] || identifier.titleize
           layout.app_layout = attributes[:app_layout] || parent.try(:app_layout)
           layout.position   = attributes[:position] if attributes[:position]
+          layout.import_attributes(attributes)
         end
       elsif layout.new_record?
         layout.label      = identifier.titleize
@@ -106,6 +107,7 @@ module ComfortableMexicanSofa::Fixtures
           page.target_page = site.pages.find_by_full_path(attributes[:target_page])
           page.is_published = attributes[:is_published].present?? attributes[:is_published] : true
           page.position = attributes[:position] if attributes[:position]
+          page.import_attributes(attributes)
         end
       elsif page.new_record?
         page.label = slug.titleize
@@ -177,6 +179,7 @@ module ComfortableMexicanSofa::Fixtures
         if snippet.new_record? || File.mtime(file_path) > snippet.updated_at
           attributes = YAML.load_file(file_path).try(:symbolize_keys!) || { }
           snippet.label = attributes[:label] || identifier.titleize
+          snippet.import_attributes(attributes)
         end
       elsif snippet.new_record?
         snippet.label = identifier.titleize
@@ -222,7 +225,7 @@ module ComfortableMexicanSofa::Fixtures
           'app_layout'  => layout.app_layout,
           'parent'      => layout.parent.try(:identifier),
           'position'    => layout.position
-        }.to_yaml)
+        }.merge(layout.export_attributes).to_yaml)
       end
       open(File.join(layout_path, 'content.html'), 'w') do |f|
         f.write(layout.content)
@@ -255,7 +258,7 @@ module ComfortableMexicanSofa::Fixtures
           'target_page'   => page.target_page.try(:slug),
           'is_published'  => page.is_published,
           'position'      => page.position
-        }.to_yaml)
+        }.merge(page.export_attributes()).to_yaml)
       end
       page.blocks_attributes.each do |block|
         open(File.join(page_path, "#{block[:identifier]}.html"), 'w') do |f|
@@ -274,7 +277,7 @@ module ComfortableMexicanSofa::Fixtures
     site.snippets.each do |snippet|
       FileUtils.mkdir_p(snippet_path = File.join(path, snippet.identifier))
       open(File.join(snippet_path, "_#{snippet.identifier}.yml"), 'w') do |f|
-        f.write({'label' => snippet.label}.to_yaml)
+        f.write({'label' => snippet.label}.merge(snippet.export_attributes).to_yaml)
       end
       open(File.join(snippet_path, 'content.html'), 'w') do |f|
         f.write(snippet.content)
