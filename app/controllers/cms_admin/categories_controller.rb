@@ -1,7 +1,12 @@
 class CmsAdmin::CategoriesController < CmsAdmin::BaseController
   
   before_filter :load_category,  :only => [:edit, :update, :destroy]
-  
+
+  def index
+    @categories = @site.categories.all
+    render :nothing => true
+  end
+
   def edit
     render
   end

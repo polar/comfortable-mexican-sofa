@@ -44,7 +44,7 @@ class Cms::Orm::MongoMapper::Page
   attr_accessor :tags,
                 :blocks_attributes_changed
 
-  cms_acts_as_tree :class_name => "Cms::Page", :counter_cache => :children_count
+  cms_acts_as_tree :class_name => "Cms::Page", :counter_cache => :children_count, :order => :position
   cms_is_categorized :class_name => "Cms::Page"
   cms_has_revisions_for :blocks_attributes
 

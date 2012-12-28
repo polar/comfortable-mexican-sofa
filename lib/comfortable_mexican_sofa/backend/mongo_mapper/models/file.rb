@@ -64,7 +64,13 @@ class Cms::Orm::MongoMapper::File
         )
       }
   )
-  before_post_process :is_image?
+  before_post_process :set_file_content_type, :is_image?
+
+  def set_file_content_type
+    ct = MIME::Types.type_for(self.file_file_name).first
+    ct ||= "undefined"
+    self.file.instance_write(:content_type, ct.to_s)
+  end
 
   # -- Instance Methods -----------------------------------------------------
   def is_image?
