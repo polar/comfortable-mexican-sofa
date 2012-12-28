@@ -300,4 +300,14 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
   def sync_child_pages
     self.children.all.each { |p| p.save! }
   end
+
+  # Can override
+  def export_attributes()
+    {}
+  end
+
+  # Can override
+  def import_attributes(attributes)
+
+  end
 end

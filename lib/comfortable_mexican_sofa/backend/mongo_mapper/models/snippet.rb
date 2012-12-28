@@ -111,4 +111,13 @@ class Cms::Orm::MongoMapper::Snippet
     self.position = max ? max + 1 : 0
   end
 
+  # Can override
+  def export_attributes()
+    {}
+  end
+
+  # Can override
+  def import_attributes(attributes)
+
+  end
 end

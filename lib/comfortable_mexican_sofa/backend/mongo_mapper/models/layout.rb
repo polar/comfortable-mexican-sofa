@@ -163,4 +163,13 @@ class Cms::Orm::MongoMapper::Layout
     self.children.all.each{ |child_layout| child_layout.clear_cached_page_content }
   end
 
+  # Can override
+  def export_attributes()
+    {}
+  end
+
+  # Can override
+  def import_attributes(attributes)
+
+  end
 end

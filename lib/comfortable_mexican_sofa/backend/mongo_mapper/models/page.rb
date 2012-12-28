@@ -319,4 +319,14 @@ class Cms::Orm::MongoMapper::Page
       self.children.all.each { |p| p.save! }
     end
   end
+
+  # Can override
+  def export_attributes()
+    {}
+  end
+
+  # Can override
+  def import_attributes(attributes)
+
+  end
 end
