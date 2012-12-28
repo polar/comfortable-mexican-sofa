@@ -26,11 +26,19 @@ class Cms::Orm::ActiveRecord::File < ActiveRecord::Base
   # -- AR Extensions --------------------------------------------------------
   has_attached_file :file, ComfortableMexicanSofa.config.upload_file_options.merge(
       # dimensions accessor needs to be set before file assignment for this to work
+      # This doesn't work in Paperclip 3.4.0 and S3 1.80
+=begin
       :styles => lambda { |f|
         (f.instance.dimensions.blank?? { } : { :original => f.instance.dimensions }).merge(
             :cms_thumb => '80x60#'
         )
       }
+=end
+    # I don't see the need for making original. Must have been a workaround for an earlier glitch.
+
+    :styles =>  {
+        :cms_thumb => '80x60#'
+    }
   )
   before_post_process :set_file_content_type, :is_image?
 
