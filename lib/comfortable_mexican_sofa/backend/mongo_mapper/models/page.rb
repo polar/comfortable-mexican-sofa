@@ -206,7 +206,7 @@ class Cms::Orm::MongoMapper::Page
           ComfortableMexicanSofa::Tag.sanitize_irb(layout.merged_content)
       )
       options.merge!({   :inline => content,
-                         :layout => "layouts/#{app_layout}"
+                         :layout => (app_layout ? "layouts/#{app_layout}" : false)
                      })
       view.render options
     else
