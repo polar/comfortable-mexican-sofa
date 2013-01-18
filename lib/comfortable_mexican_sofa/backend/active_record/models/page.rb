@@ -197,7 +197,7 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
   def render(view, options)
     self.tags = [] # resetting
     if layout
-      app_layout = (layout.app_layout.blank? || view.request.xhr?) ? false : layout.app_layout
+      app_layout = (layout.app_layout.blank? || view.request.xhr?) ? nil : layout.app_layout
 
       content = ComfortableMexicanSofa::Tag.render_in_view(
           self,
@@ -205,7 +205,7 @@ class Cms::Orm::ActiveRecord::Page < ActiveRecord::Base
           ComfortableMexicanSofa::Tag.sanitize_irb(layout.merged_content)
       )
       options.merge!({   :inline => content,
-                         :layout => "layouts/#{app_layout}"
+                         :layout => (app_layout ? "layouts/#{app_layout}" : nil)
                      })
       view.render options
     else
