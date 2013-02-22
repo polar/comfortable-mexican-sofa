@@ -12,3 +12,6 @@ public/*
 Gemfile.lock
 .rvmrc
 /coverage
+.idea
+projectFilesBackup
+vendor
