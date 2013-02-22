@@ -36,11 +36,7 @@
 .el-dialogform table td{padding:2px}
 .el-dialogform input,.el-dialogform textarea{border:1px solid #ccc}
 .el-dialogform select{padding:0}
-<<<<<<< HEAD:app/assets/stylesheets/comfortable_mexican_sofa/elrte.css.erb
-.el-dialogform .spinner{background:url(<%= asset_path "/assets/comfortable_mexican_sofa/elrte/loading.gif" %>) 50% 50% no-repeat;text-align:center;width:150px;height:50px;margin:10px auto;padding-top:33px;font-weight:bold}
-=======
 .el-dialogform .spinner{background:url(/assets/comfortable_mexican_sofa/elrte/loading.gif) 50% 50% no-repeat;text-align:center;width:150px;height:50px;margin:10px auto;padding-top:33px;font-weight:bold}
->>>>>>> parent of d456b68... Switch to using ERB ans asset_path in prep to use an Asset Host.:app/assets/stylesheets/comfortable_mexican_sofa/elrte.css
 .el-dialogform-error{background:#fee;color:#f00;border:2px #844 solid;padding:10px;margin-bottom:1em 0}
 .el-dialogform-message{background:#efe;color:#040;border:2px #484 solid;padding:10px;margin-bottom:1em 0}
 .el-dialogform table td .el-borderselect table{width:auto}
@@ -58,15 +54,6 @@
 .el-select .list div *{padding:0;margin:0;border:0;white-space:nowrap;display:block}
 .el-rte{font-family:Trebuchet MS,Verdana,Geneva,sans-serif;overflow:hidden}
 .el-rte.el-fullscreen{position:absolute;width:99%;top:0;left:0;margin:0;z-index:10}
-<<<<<<< HEAD:app/assets/stylesheets/comfortable_mexican_sofa/elrte.css.erb
-.elrte-swf-placeholder{width:1px;background:url(<%= asset_path "/assets/comfortable_mexican_sofa/elrte/swf.png" %>) 0 0 no-repeat}
-.elrtetesturl{color:red;background-image:url(<%= asset_path "/assets/comfortable_mexican_sofa/elrte/pixel.gif" %>)}
-.el-rte .toolbar{background-color:#eee;padding:3px 7px 2px 7px;border:1px solid #ccc;white-space:normal}
-.el-rte-rtl .toolbar{direction:rtl}
-.el-rte .toolbar ul{position:relative;display:inline-block;display:-moz-inline-stack;display:inline-block;vertical-align:top;zoom:1;*display:inline;margin:0;list-style:none;padding:0 2px 0 5px;background:url(<%= asset_path "'/assets/comfortable_mexican_sofa/elrte/elrte-toolbar.png'" %>) -934px -2px no-repeat}
-.el-rte .toolbar ul.first{background:transparent;padding-left:0}
-.el-rte .toolbar ul li{display:inline-block;display:-moz-inline-stack;display:inline-block;height:22px;width:22px;vertical-align:top;zoom:1;*display:inline;margin:1px 1px;padding:0;background:url(<%= asset_path "'/assets/comfortable_mexican_sofa/elrte/elrte-toolbar.png'" %>) no-repeat;border:1px solid #ccc;z-index:100}
-=======
 .elrte-swf-placeholder{width:1px;background:url('/assets/comfortable_mexican_sofa/elrte/swf.png') 0 0 no-repeat}
 .elrtetesturl{color:red;background-image:url(/assets/comfortable_mexican_sofa/elrte/pixel.gif)}
 .el-rte .toolbar{background-color:#eee;padding:3px 7px 2px 7px;border:1px solid #ccc;white-space:normal}
@@ -74,7 +61,6 @@
 .el-rte .toolbar ul{position:relative;display:inline-block;display:-moz-inline-stack;display:inline-block;vertical-align:top;zoom:1;*display:inline;margin:0;list-style:none;padding:0 2px 0 5px;background:url('/assets/comfortable_mexican_sofa/elrte/elrte-toolbar.png') -934px -2px no-repeat}
 .el-rte .toolbar ul.first{background:transparent;padding-left:0}
 .el-rte .toolbar ul li{display:inline-block;display:-moz-inline-stack;display:inline-block;height:22px;width:22px;vertical-align:top;zoom:1;*display:inline;margin:1px 1px;padding:0;background:url('/assets/comfortable_mexican_sofa/elrte/elrte-toolbar.png') no-repeat;border:1px solid #ccc;z-index:100}
->>>>>>> parent of d456b68... Switch to using ERB ans asset_path in prep to use an Asset Host.:app/assets/stylesheets/comfortable_mexican_sofa/elrte.css
 .el-rte .toolbar ul li.hover{border:1px solid #484848}
 .el-rte .toolbar ul li.active{background-color:#fff;border:1px solid #ccc}
 .el-rte .toolbar ul li.disabled{opacity:.3}
@@ -170,11 +156,7 @@
 .el-dialogform p{padding:.2em .3em}
 .el-dialogform h3{color:#555;padding:1.2em 0 0 0;margin:0;font-size:1.2em}
 .el-dialogform h4{color:#555;font-size:1em;padding:0;margin:3px 9px}
-<<<<<<< HEAD:app/assets/stylesheets/comfortable_mexican_sofa/elrte.css.erb
-.elrte-logo{width:48px;height:46px;float:left;margin:.5em 1em;background:url(<%= asset_path "'/assets/comfortable_mexican_sofa/elrte/elrte-toolbar.png'" %>) -880px -7px no-repeat}
-=======
 .elrte-logo{width:48px;height:46px;float:left;margin:.5em 1em;background:url('/assets/comfortable_mexican_sofa/elrte/elrte-toolbar.png') -880px -7px no-repeat}
->>>>>>> parent of d456b68... Switch to using ERB ans asset_path in prep to use an Asset Host.:app/assets/stylesheets/comfortable_mexican_sofa/elrte.css
 .elrte-ver{font-size:.9em;padding-left:.7em}
 .elrte-copy{font-size:.9em;padding-left:.3em}
 table.elrte-authors{margin-bottom:1em}

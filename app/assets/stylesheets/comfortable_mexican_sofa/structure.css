@@ -59,11 +59,7 @@ html, body#cms_body {
   display: block;
   height: 16px;
   width: 8px;
-<<<<<<< HEAD:app/assets/stylesheets/comfortable_mexican_sofa/structure.css.erb
-  background: transparent url(<%= asset_path "/assets/comfortable_mexican_sofa/nav_arrow.png" %>);
-=======
   background: transparent url(/assets/comfortable_mexican_sofa/nav_arrow.png);
->>>>>>> parent of d456b68... Switch to using ERB ans asset_path in prep to use an Asset Host.:app/assets/stylesheets/comfortable_mexican_sofa/structure.css
 }
 #cms_body .right_column_content h2 {
   color: #d8d8d8;
