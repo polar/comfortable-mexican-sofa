@@ -5,13 +5,13 @@
 
 Gem::Specification.new do |s|
   s.name = "comfortable_mexican_sofa"
-  s.version = "1.6.20"
+  s.version = "1.7.0.pre1"
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Oleg Khabarov", "The Working Group Inc"]
-  s.date = "2012-05-28"
+  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
+  s.authors = ["Oleg Khabarov", "The Working Group Inc", "Polar Humenn"]
+  s.date = "2013-02-22"
   s.description = ""
-  s.email = "oleg@theworkinggroup.ca"
+  s.email = ["oleg@theworkinggroup.ca", "polar@adiron.com"]
   s.extra_rdoc_files = [
     "LICENSE",
     "README.md"
@@ -83,14 +83,10 @@ Gem::Specification.new do |s|
     "app/assets/javascripts/comfortable_mexican_sofa/rails.js",
     "app/assets/stylesheets/comfortable_mexican_sofa/application.css",
     "app/assets/stylesheets/comfortable_mexican_sofa/codemirror.css",
-    "app/assets/stylesheets/comfortable_mexican_sofa/content.css",
     "app/assets/stylesheets/comfortable_mexican_sofa/dialogs.css",
-    "app/assets/stylesheets/comfortable_mexican_sofa/elrte.css",
     "app/assets/stylesheets/comfortable_mexican_sofa/files.css",
     "app/assets/stylesheets/comfortable_mexican_sofa/form.css",
-    "app/assets/stylesheets/comfortable_mexican_sofa/jquery_ui.css",
     "app/assets/stylesheets/comfortable_mexican_sofa/reset.css",
-    "app/assets/stylesheets/comfortable_mexican_sofa/structure.css",
     "app/assets/stylesheets/comfortable_mexican_sofa/typography.css",
     "app/assets/stylesheets/comfortable_mexican_sofa/widgets.css",
     "app/controllers/application_controller.rb",
@@ -211,10 +207,6 @@ Gem::Specification.new do |s|
     "lib/comfortable_mexican_sofa/configuration.rb",
     "lib/comfortable_mexican_sofa/engine.rb",
     "lib/comfortable_mexican_sofa/error.rb",
-    "lib/comfortable_mexican_sofa/extensions/acts_as_tree.rb",
-    "lib/comfortable_mexican_sofa/extensions/has_revisions.rb",
-    "lib/comfortable_mexican_sofa/extensions/is_categorized.rb",
-    "lib/comfortable_mexican_sofa/extensions/is_mirrored.rb",
     "lib/comfortable_mexican_sofa/extensions/rails.rb",
     "lib/comfortable_mexican_sofa/fixtures.rb",
     "lib/comfortable_mexican_sofa/form_builder.rb",
@@ -320,9 +312,9 @@ Gem::Specification.new do |s|
     "test/unit/tags/snippet_test.rb",
     "test/unit/view_methods_test.rb"
   ]
-  s.homepage = "http://github.com/comfy/comfortable-mexican-sofa"
+  s.homepage = "http://github.com/polar/comfortable-mexican-sofa"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.24"
   s.summary = "ComfortableMexicanSofa is a powerful CMS Engine for Ruby on Rails 3 applications"
 
   if s.respond_to? :specification_version then
@@ -332,15 +324,24 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rails>, [">= 3.0.0"])
       s.add_runtime_dependency(%q<active_link_to>, ["~> 1.0.0"])
       s.add_runtime_dependency(%q<paperclip>, [">= 2.3.0"])
+      s.add_development_dependency(%q<linecache19>, ["= 0.5.13"])
+      s.add_development_dependency(%q<ruby-debug-base19x>, ["= 0.11.30.pre10"])
+      s.add_development_dependency(%q<ruby-debug-ide>, [">= 0"])
     else
       s.add_dependency(%q<rails>, [">= 3.0.0"])
       s.add_dependency(%q<active_link_to>, ["~> 1.0.0"])
       s.add_dependency(%q<paperclip>, [">= 2.3.0"])
+      s.add_dependency(%q<linecache19>, ["= 0.5.13"])
+      s.add_dependency(%q<ruby-debug-base19x>, ["= 0.11.30.pre10"])
+      s.add_dependency(%q<ruby-debug-ide>, [">= 0"])
     end
   else
     s.add_dependency(%q<rails>, [">= 3.0.0"])
     s.add_dependency(%q<active_link_to>, ["~> 1.0.0"])
     s.add_dependency(%q<paperclip>, [">= 2.3.0"])
+    s.add_dependency(%q<linecache19>, ["= 0.5.13"])
+    s.add_dependency(%q<ruby-debug-base19x>, ["= 0.11.30.pre10"])
+    s.add_dependency(%q<ruby-debug-ide>, [">= 0"])
   end
 end
 
