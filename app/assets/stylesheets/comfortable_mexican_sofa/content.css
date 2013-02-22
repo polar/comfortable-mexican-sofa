@@ -114,30 +114,50 @@
   display: block;
   height: 28px;
   width: 28px;
+<<<<<<< HEAD:app/assets/stylesheets/comfortable_mexican_sofa/content.css.erb
   background: url(<%= asset_path "/assets/comfortable_mexican_sofa/arrow_right.gif" %>) center center no-repeat;
+=======
+  background: url(/assets/comfortable_mexican_sofa/arrow_right.gif) center center no-repeat;
+>>>>>>> parent of d456b68... Switch to using ERB ans asset_path in prep to use an Asset Host.:app/assets/stylesheets/comfortable_mexican_sofa/content.css
 }
 #cms_body ul.list li .item .toggle a span {
   display: none;
 }
 #cms_body ul.list li .item .toggle.open a {
+<<<<<<< HEAD:app/assets/stylesheets/comfortable_mexican_sofa/content.css.erb
   background-image: url(<%= asset_path "/assets/comfortable_mexican_sofa/arrow_bottom.gif" %>);
+=======
+  background-image: url(/assets/comfortable_mexican_sofa/arrow_bottom.gif);
+>>>>>>> parent of d456b68... Switch to using ERB ans asset_path in prep to use an Asset Host.:app/assets/stylesheets/comfortable_mexican_sofa/content.css
 }
 #cms_body ul.list li .item .icon,
 #cms_body table.formatted td .icon {
   float: left;
   width: 28px;
   height: 28px;
+<<<<<<< HEAD:app/assets/stylesheets/comfortable_mexican_sofa/content.css.erb
   background: url(<%= asset_path "/assets/comfortable_mexican_sofa/icon_regular.gif" %>);
 }
 #cms_body ul.list li .item .icon.draft,
 #cms_body table.formatted td .icon.draft {
   background: url(<%= asset_path "/assets/comfortable_mexican_sofa/icon_draft.gif" %>);
+=======
+  background: url(/assets/comfortable_mexican_sofa/icon_regular.gif);
+}
+#cms_body ul.list li .item .icon.draft,
+#cms_body table.formatted td .icon.draft {
+  background: url(/assets/comfortable_mexican_sofa/icon_draft.gif);
+>>>>>>> parent of d456b68... Switch to using ERB ans asset_path in prep to use an Asset Host.:app/assets/stylesheets/comfortable_mexican_sofa/content.css
 }
 #cms_body ul.list li .item .icon .dragger,
 #cms_body table.formatted td .icon .dragger {
   width: 28px;
   height: 28px;
+<<<<<<< HEAD:app/assets/stylesheets/comfortable_mexican_sofa/content.css.erb
   background: url(<%= asset_path "/assets/comfortable_mexican_sofa/icon_move.gif" %>);
+=======
+  background: url(/assets/comfortable_mexican_sofa/icon_move.gif);
+>>>>>>> parent of d456b68... Switch to using ERB ans asset_path in prep to use an Asset Host.:app/assets/stylesheets/comfortable_mexican_sofa/content.css
   cursor: move;
   display: none;
 }
@@ -220,10 +240,17 @@
   margin-left: 60px;
 }
 #cms_body.c_cms_admin_layouts.a_index ul.list li .item .icon {
+<<<<<<< HEAD:app/assets/stylesheets/comfortable_mexican_sofa/content.css.erb
   background-image: url(<%= asset_path "/assets/comfortable_mexican_sofa/icon_layout.gif" %>);
 }
 #cms_body.c_cms_admin_snippets.a_index ul.list li .item .icon {
   background-image: url(<%= asset_path "/assets/comfortable_mexican_sofa/icon_snippet.gif" %>);
+=======
+  background-image: url(/assets/comfortable_mexican_sofa/icon_layout.gif);
+}
+#cms_body.c_cms_admin_snippets.a_index ul.list li .item .icon {
+  background-image: url(/assets/comfortable_mexican_sofa/icon_snippet.gif);
+>>>>>>> parent of d456b68... Switch to using ERB ans asset_path in prep to use an Asset Host.:app/assets/stylesheets/comfortable_mexican_sofa/content.css
 }
 #cms_body.c_cms_admin_files textarea#file_description {
   height: 100px;
